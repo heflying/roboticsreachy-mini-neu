@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASR模型选型分析 — sherpa-onnx中文模型对比</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: #f5f6fa;
+    color: #2d3436;
+    line-height: 1.8;
+    padding: 40px 0;
+  }
+  .container { max-width: 1000px; margin:0 auto; padding:0 20px; }
+  h1 {
+    text-align: center;
+    font-size: 28px;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    text-align: center;
+    color: #636e72;
+    font-size: 14px;
+    margin-bottom: 36px;
+  }
+  h2 {
+    font-size: 20px;
+    color: #2d3436;
+    margin: 36px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #00b894;
+  }
+  h3 {
+    font-size: 16px;
+    color: #2d3436;
+    margin: 24px 0 12px;
+  }
+
+  /* 约束卡片 */
+  .constraint-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .constraint-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border-left: 4px solid #00b894;
+  }
+  .constraint-card .label { font-size: 12px; color: #636e72; text-transform: uppercase; letter-spacing: 1px; }
+  .constraint-card .value { font-size: 18px; font-weight: 700; color: #1a1a2e; margin-top: 4px; }
+  .constraint-card .excluded { font-size: 12px; color: #d63031; margin-top: 6px; }
+
+  /* 表格 */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    margin: 16px 0 24px;
+  }
+  th {
+    background: #1a1a2e;
+    color: #fff;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+  }
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid #ecf0f1;
+    font-size: 14px;
+  }
+  tr:last-child td { border-bottom: none; }
+
+  /* 标签 */
+  .tag-pass { display:inline-block; background:#00b894; color:#fff; padding:2px 10px; border-radius:12px; font-size:12px; font-weight:600; }
+  .tag-fail { display:inline-block; background:#d63031; color:#fff; padding:2px 10px; border-radius:12px; font-size:12px; font-weight:600; }
+  .tag-warn { display:inline-block; background:#fdcb6e; color:#2d3436; padding:2px 10px; border-radius:12px; font-size:12px; font-weight:600; }
+
+  /* 选中的卡片 */
+  .selected-models {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 20px 0 32px;
+  }
+  .model-card {
+    background: linear-gradient(135deg, #00b89415, #00b89408);
+    border: 2px solid #00b894;
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .model-card.gold { border-color: #fdcb6e; background: linear-gradient(135deg, #fdcb6e15, #fdcb6e08); }
+  .model-card .model-name { font-size: 22px; font-weight: 800; color: #1a1a2e; }
+  .model-card .model-tagline { font-size: 13px; color: #636e72; margin-bottom: 16px; }
+  .model-card .stat { margin: 6px 0; font-size: 14px; }
+  .model-card .stat strong { min-width: 80px; display: inline-block; }
+
+  /* 演进图 */
+  .evolution-flow {
+    background: #fff;
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+  .evolution-flow .gen {
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: #ecf0f1;
+    white-space: nowrap;
+  }
+  .evolution-flow .gen.final {
+    background: #00b894;
+    color: #fff;
+    font-weight: 700;
+  }
+  .evolution-flow .arrow { color: #b2bec3; font-size: 18px; }
+
+  .note {
+    background: #dfe6e9;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 20px 0;
+    font-size: 14px;
+    color: #636e72;
+  }
+  .note strong { color: #2d3436; }
+
+  .footnote { font-size:12px; color:#b2bec3; margin-top:8px; }
+
+  hr { border: none; border-top: 1px solid #ecf0f1; margin: 40px 0; }
+
+  .summary-box {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    color: #fff;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 16px 0 8px;
+    font-size: 15px;
+  }
+  .summary-box .big { font-size: 20px; font-weight: 800; }
+  .summary-box ul { margin: 12px 0 0 20px; }
+  .summary-box li { margin: 6px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>ASR 模型选型分析</h1>
+<p class="subtitle">基于 sherpa-onnx asr-models release · 养老陪护机器人场景 · 2025年6月</p>
+
+<!-- ===== 项目约束 ===== -->
+<h2>一、项目约束条件</h2>
+<div class="constraint-cards">
+  <div class="constraint-card">
+    <div class="label">🚀 推理设备</div>
+    <div class="value">CPU Only</div>
+    <div class="excluded">排除：FireRedASR（需GPU）、Qwen3-ASR</div>
+  </div>
+  <div class="constraint-card">
+    <div class="label">🔄 推理模式</div>
+    <div class="value">流式 Streaming</div>
+    <div class="excluded">排除：SenseVoice（非流式）</div>
+  </div>
+  <div class="constraint-card">
+    <div class="label">🎯 目标精度</div>
+    <div class="value">中文 CER 低优先</div>
+    <div class="excluded">排除：Whisper（中文 CER ~5%）</div>
+  </div>
+  <div class="constraint-card">
+    <div class="label">📦 部署框架</div>
+    <div class="value">sherpa-onnx</div>
+    <div class="excluded">排除：whisper.cpp 生态</div>
+  </div>
+</div>
+
+<!-- ===== 架构演进 ===== -->
+<h2>二、sherpa-onnx 中文模型架构演进</h2>
+<div class="evolution-flow">
+  <span class="gen">LSTM<br><small>~2019前</small></span>
+  <span class="arrow">→</span>
+  <span class="gen">Conformer<br><small>2020–2022</small></span>
+  <span class="arrow">→</span>
+  <span class="gen">Zipformer-zh<br><small>2025.06 · K2-FSA自研</small></span>
+  <span class="arrow">→</span>
+  <span class="gen final">✅ 选定</span>
+</div>
+<div class="evolution-flow" style="margin-top:8px;">
+  <span class="gen">Paraformer-zh<br><small>2024.03 · 达摩院</small></span>
+  <span class="arrow">→</span>
+  <span class="gen final">✅ 选定</span>
+</div>
+<div class="footnote" style="text-align:center;">注：同架构代际内（如 Conformer → Zipformer），后者是前者的升级版，只测更新版本</div>
+
+<!-- ===== 逐一排除 ===== -->
+<h2>三、逐一排除理由</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:16%">模型</th>
+      <th style="width:18%">架构</th>
+      <th style="width:10%">年代</th>
+      <th style="width:10%">判定</th>
+      <th>排除原因</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>LSTM Transducer</strong></td>
+      <td>LSTM RNN-T</td>
+      <td>~2019</td>
+      <td><span class="tag-fail">排除</span></td>
+      <td>
+        <strong>架构已淘汰</strong>：三代以前的架构，已被 Conformer / Zipformer 全面超越。类比：用 ResNet-18 对比 ResNet-152，没有价值。
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Conformer-zh</strong></td>
+      <td>Conformer + Transducer</td>
+      <td>2023.05</td>
+      <td><span class="tag-fail">排除</span></td>
+      <td>
+        <strong>已被 Zipformer 取代</strong>：Zipformer 是 K2-FSA 团队基于 Conformer 的正统升级版，相同团队、相同数据，测 Conformer 不如直接测 Zipformer。（Zipformer 论文已验证对 Conformer 的全面优势）
+      </td>
+    </tr>
+    <tr>
+      <td><strong>SenseVoice-Small</strong></td>
+      <td>通义 CTC</td>
+      <td>2024.07</td>
+      <td><span class="tag-fail">排除</span></td>
+      <td>
+        <strong>非流式 + 精度不如 Paraformer</strong>：SenseVoice 核心卖点是情感识别和音频事件检测，纯 ASR 精度（CER ~3%）低于 Paraformer（1.95%）；且不支持流式解码，不符合 robot streaming 场景要求。
+      </td>
+    </tr>
+    <tr>
+      <td><strong>FireRedASR</strong></td>
+      <td>AED / LLM</td>
+      <td>2025.02</td>
+      <td><span class="tag-fail">排除</span></td>
+      <td>
+        <strong>需GPU + 非流式</strong>：参数 1.1B / 8.3B，CER 确实最低（AISHELL-1 0.57%），但需要 GPU 推理且非流式。机器人 CPU Only 场景根本跑不动。
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Whisper (large-v3)</strong></td>
+      <td>Encoder-Decoder</td>
+      <td>2023</td>
+      <td><span class="tag-fail">排除</span></td>
+      <td>
+        <strong>中文精度显著落后</strong>：作为通用多语言模型，AISHELL-1 CER 约 5.14%，比国产中文专精模型差 3–5 倍。不是中文场景的最优选择。
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="note">
+  <strong>四种排除原因总结：</strong><br>
+  🗑️ <strong>架构已淘汰</strong>（不如 Zipformer）→ LSTM、Conformer<br>
+  🔒 <strong>非流式</strong>（不符合 streaming 要求）→ SenseVoice、FireRedASR<br>
+  🖥️ <strong>CPU 跑不动</strong>（需要 GPU）→ FireRedASR<br>
+  🇨🇳 <strong>中文精度差</strong> → Whisper
+</div>
+
+<!-- ===== 最终选定 ===== -->
+<h2>四、最终选定：2 个模型</h2>
+<div class="selected-models">
+  <div class="model-card">
+    <div class="model-name">Zipformer-zh</div>
+    <div class="model-tagline">K2-FSA 自研 · Kaldi 路线天花板</div>
+    <div class="stat"><strong>参数量：</strong>~80 MB</div>
+    <div class="stat"><strong>架构：</strong>Zipformer + Transducer</div>
+    <div class="stat"><strong>流式：</strong><span class="tag-pass">✅ 流式</span></div>
+    <div class="stat"><strong>CPU推理：</strong><span class="tag-pass">✅ 可运行</span></div>
+    <div class="stat"><strong>定位：</strong>基线模型（当前代码已集成）</div>
+  </div>
+  <div class="model-card gold">
+    <div class="model-name">Paraformer-zh</div>
+    <div class="model-tagline">达摩院出品 · FunASR 生态天花板</div>
+    <div class="stat"><strong>参数量：</strong>220 MB</div>
+    <div class="stat"><strong>架构：</strong>U2++ (CTC + Attention)</div>
+    <div class="stat"><strong>流式：</strong><span class="tag-pass">✅ 流式</span></div>
+    <div class="stat"><strong>CPU推理：</strong><span class="tag-pass">✅ 可运行</span></div>
+    <div class="stat"><strong>AISHELL-1 CER：</strong><strong style="color:#e17055;">1.95%</strong></div>
+    <div class="stat"><strong>定位：</strong>精度天花板</div>
+  </div>
+</div>
+
+<!-- ===== 结论 ===== -->
+<div class="summary-box">
+  <span class="big">最终测试矩阵：Zipformer + Paraformer</span>
+  <ul>
+    <li><strong>Zipformer-zh</strong>：基线模型，K2-FSA 路线代表，轻量 80MB，流式</li>
+    <li><strong>Paraformer-zh</strong>：精度天花板，达摩院路线代表，220MB，AISHELL-1 CER 1.95%，流式</li>
+    <li>两个模型覆盖 Kaldi 路线与达摩院路线两条技术路线</li>
+    <li>在两个数据集上评测：AISHELL-1（普通场景）+ SeniorTalk（老年人场景）</li>
+    <li>指标：<strong>WER / CER / RTF / TTFT</strong></li>
+  </ul>
+</div>
+
+<hr>
+<p style="text-align:center;color:#b2bec3;font-size:12px;">
+  数据来源：<a href="https://github.com/k2-fsa/sherpa-onnx/releases/tag/asr-models" style="color:#00b894;">sherpa-onnx asr-models release</a>
+  &nbsp;|&nbsp;
+  <a href="https://k2-fsa.github.io/sherpa/onnx/pretrained_models/index.html" style="color:#00b894;">sherpa-onnx 预训练模型文档</a>
+  &nbsp;|&nbsp;
+  社区实际评测数据
+</p>
+
+</div>
+</body>
+</html>

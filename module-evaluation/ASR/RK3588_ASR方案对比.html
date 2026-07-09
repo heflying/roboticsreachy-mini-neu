@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RK3588 中文ASR方案对比 — 养老陪护机器人选型</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: #f5f6fa;
+    color: #2d3436;
+    line-height: 1.8;
+    padding: 40px 0;
+  }
+  .container { max-width: 1100px; margin:0 auto; padding:0 20px; }
+  h1 {
+    text-align: center;
+    font-size: 28px;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    text-align: center;
+    color: #636e72;
+    font-size: 14px;
+    margin-bottom: 36px;
+  }
+  h2 {
+    font-size: 20px;
+    color: #2d3436;
+    margin: 36px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0984e3;
+  }
+  h3 {
+    font-size: 16px;
+    color: #2d3436;
+    margin: 24px 0 12px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    margin: 16px 0 24px;
+  }
+  th {
+    background: #1a1a2e;
+    color: #fff;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid #ecf0f1;
+    font-size: 14px;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) { background: #f8f9fa; }
+
+  .tag-pass { display:inline-block; background:#00b894; color:#fff; padding:2px 10px; border-radius:12px; font-size:12px; font-weight:600; }
+  .tag-fail { display:inline-block; background:#d63031; color:#fff; padding:2px 10px; border-radius:12px; font-size:12px; font-weight:600; }
+  .tag-warn { display:inline-block; background:#fdcb6e; color:#2d3436; padding:2px 10px; border-radius:12px; font-size:12px; font-weight:600; }
+  .tag-info { display:inline-block; background:#0984e3; color:#fff; padding:2px 10px; border-radius:12px; font-size:12px; font-weight:600; }
+
+  .note {
+    background: #dfe6e9;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 20px 0;
+    font-size: 14px;
+    color: #636e72;
+  }
+  .note strong { color: #2d3436; }
+
+  .perf-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .perf-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border-left: 4px solid #0984e3;
+  }
+  .perf-card .rtf { font-size: 28px; font-weight: 800; color: #0984e3; }
+  .perf-card .model-name { font-size: 13px; color: #636e72; margin-top: 4px; }
+  .perf-card .detail { font-size: 12px; color: #b2bec3; margin-top: 8px; }
+  .perf-card.streaming { border-left-color: #00b894; }
+  .perf-card.streaming .rtf { color: #00b894; }
+
+  .winner-box {
+    background: linear-gradient(135deg, #0984e315, #6c5ce715);
+    border: 2px solid #0984e3;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 24px 0;
+  }
+  .winner-box h3 { margin-top:0; color: #0984e3; }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .summary-item {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .summary-item h4 { color: #0984e3; margin-bottom: 8px; font-size: 15px; }
+  .summary-item ul { margin-left: 20px; font-size: 14px; }
+  .summary-item li { margin: 4px 0; }
+
+  .verdict {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    color: #fff;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 24px 0;
+    font-size: 15px;
+  }
+  .verdict .big { font-size: 20px; font-weight: 800; }
+  .verdict ul { margin: 12px 0 0 20px; }
+  .verdict li { margin: 6px 0; }
+
+  hr { border: none; border-top: 1px solid #ecf0f1; margin: 40px 0; }
+  .footnote { font-size:12px; color:#b2bec3; margin-top:8px; }
+
+  .highlight { background: #ffeaa7; padding: 1px 4px; border-radius: 3px; }
+  .green { color: #00b894; font-weight: 700; }
+  .red { color: #d63031; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>RK3588 中文 ASR 部署方案对比</h1>
+<p class="subtitle">养老陪护机器人场景 · 离线/流式/CPU+NPU推理 · 2025年6月</p>
+
+<!-- ===== 平台约束 ===== -->
+<h2>一、RK3588 硬件概况</h2>
+<div class="perf-cards">
+  <div class="perf-card">
+    <span style="font-size:28px;font-weight:800;">4×A76 + 4×A55</span>
+    <div class="model-name">CPU 架构</div>
+    <div class="detail">8nm 工艺，最高 2.4GHz</div>
+  </div>
+  <div class="perf-card">
+    <span class="rtf">6 TOPS</span>
+    <div class="model-name">NPU 算力 (INT8)</div>
+    <div class="detail">支持 INT4/INT8/INT16/FP16</div>
+  </div>
+  <div class="perf-card">
+    <span style="font-size:28px;font-weight:800;">8K 编解码</span>
+    <div class="model-name">多媒体能力</div>
+    <div class="detail">多路麦克风阵列接口</div>
+  </div>
+  <div class="perf-card">
+    <span style="font-size:28px;font-weight:800;">ARM64 Linux</span>
+    <div class="model-name">操作系统</div>
+    <div class="detail">Ubuntu / Debian / Buildroot</div>
+  </div>
+</div>
+
+<div class="note">
+  <strong>关键约束：</strong>只考虑 <span class="highlight">CPU+NPU</span> 推理（无GPU），优先 <span class="highlight">流式 streaming</span>，要求 <span class="highlight">中文精度高</span>，必须支持 <span class="highlight">ARM64 架构</span>。
+</div>
+
+<!-- ===== 方案总览 ===== -->
+<h2>二、方案总览</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:16%">方案</th>
+      <th style="width:12%">推理引擎</th>
+      <th style="width:10%">NPU加速</th>
+      <th style="width:10%">流式</th>
+      <th style="width:10%">中文精度</th>
+      <th style="width:10%">成熟度</th>
+      <th style="width:10%">判定</th>
+      <th>备注</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>sherpa-onnx</strong></td>
+      <td>ONNX Runtime / RKNN</td>
+      <td><span class="tag-pass">✅ NPU</span></td>
+      <td><span class="tag-pass">✅ 流式</span></td>
+      <td><span class="tag-pass">⭐⭐⭐</span></td>
+      <td><span class="tag-pass">⭐⭐⭐</span></td>
+      <td><span class="tag-pass">首选</span></td>
+      <td>官方原生支持 RK3588，Zipformer 流式 + SenseVoice/Paraformer 离线</td>
+    </tr>
+    <tr>
+      <td><strong>Whisper + RKNN</strong></td>
+      <td>RKNN (NPU)</td>
+      <td><span class="tag-pass">✅ NPU</span></td>
+      <td><span class="tag-fail">❌ 非流式</span></td>
+      <td><span class="tag-warn">⭐ 差</span></td>
+      <td><span class="tag-warn">⭐⭐</span></td>
+      <td><span class="tag-warn">备选</span></td>
+      <td>需 ONNX→RKNN 转换；中文 CER ~5%（比国产模型差 3-5 倍）</td>
+    </tr>
+    <tr>
+      <td><strong>FunASR 原生</strong></td>
+      <td>ONNX Runtime</td>
+      <td><span class="tag-warn">⚠️ 需自转</span></td>
+      <td><span class="tag-pass">✅ 流式</span></td>
+      <td><span class="tag-pass">⭐⭐⭐</span></td>
+      <td><span class="tag-warn">⭐⭐</span></td>
+      <td><span class="tag-warn">重复</span></td>
+      <td>Paraformer 已通过 sherpa-onnx 部署，再单独部署无增量价值</td>
+    </tr>
+    <tr>
+      <td><strong>PaddleSpeech</strong></td>
+      <td>FastDeploy</td>
+      <td><span class="tag-fail">❌ 不支持</span></td>
+      <td><span class="tag-warn">⚠️ 有限</span></td>
+      <td><span class="tag-warn">⭐⭐</span></td>
+      <td><span class="tag-warn">⭐</span></td>
+      <td><span class="tag-fail">不推荐</span></td>
+      <td>ARM64 支持不完善，无 NPU 加速，中文流式模型少</td>
+    </tr>
+    <tr>
+      <td><strong>Vosk / DeepSpeech / Coqui</strong></td>
+      <td>各自引擎</td>
+      <td><span class="tag-fail">❌ 无</span></td>
+      <td><span class="tag-fail">❌ 无</span></td>
+      <td><span class="tag-fail">❌ 差</span></td>
+      <td><span class="tag-fail">❌ 差</span></td>
+      <td><span class="tag-fail">不适用</span></td>
+      <td>无成熟中文模型或已停止维护</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ===== sherpa-onnx 详细 ===== -->
+<h2>三、sherpa-onnx RK3588 模型详情 👑</h2>
+
+<p style="margin-top:16px;">sherpa-onnx 是 <strong>唯一在 RK3588 上有官方原生支持的中文 ASR 框架</strong>，提供预编译的 RKNN 模型和完整文档。</p>
+
+<h3>3.1 流式模型（streaming）— 适合实时对话</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>模型</th>
+      <th>语言</th>
+      <th>Encoder 大小</th>
+      <th>RTF (NPU)</th>
+      <th>示例</th>
+      <th>推荐场景</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Zipformer-small</strong></td>
+      <td>中英双语</td>
+      <td>44 MB</td>
+      <td><span class="green">0.20</span></td>
+      <td>18秒音频 → 3.5秒处理</td>
+      <td>资源敏感、低延迟优先</td>
+    </tr>
+    <tr>
+      <td><strong>Zipformer</strong></td>
+      <td>中英双语</td>
+      <td>132 MB</td>
+      <td><span class="green">0.38</span></td>
+      <td>4.7秒音频 → 1.8秒处理</td>
+      <td>精度优先、机器人主模型</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="note">
+  <strong>RTF &lt; 1 即可满足实时要求</strong>。两个模型均支持麦克风实时识别（<code>sherpa-onnx-alsa</code>），NPU 核心可选 0~3。
+</div>
+
+<h3>3.2 离线模型（non-streaming）— 适合 VAD 分段后识别</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>模型</th>
+      <th>语言</th>
+      <th>最大时长</th>
+      <th>模型大小</th>
+      <th>RTF (NPU)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Paraformer-zh</strong></td>
+      <td>中文</td>
+      <td>15 秒</td>
+      <td>~432 MB</td>
+      <td><span class="green">0.075</span> ⭐最快</td>
+    </tr>
+    <tr>
+      <td><strong>SenseVoice</strong></td>
+      <td>中/英/日/韩/粤</td>
+      <td>5~30 秒</td>
+      <td>~200 MB</td>
+      <td><span class="green">0.129</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="note">
+  <strong>NPU vs CPU 速度对比（SenseVoice 10秒版）：</strong><br>
+  &nbsp;&nbsp;1×A55 小核 CPU：RTF 0.440 &nbsp;|&nbsp; 1×A76 大核 CPU：RTF 0.100 &nbsp;|&nbsp; <strong>1×NPU：RTF 0.129</strong><br>
+  NPU 速度接近大核 CPU，关键优势是 <strong>释放 CPU 做其他任务</strong>（如 VAD、TTS、业务逻辑）。
+</div>
+
+<!-- ===== 其他方案详情 ===== -->
+<h2>四、其他方案详细分析</h2>
+
+<h3>4.1 Whisper + RKNN</h3>
+<div class="note">
+  <strong>部署路径：</strong>PyTorch 模型 → ONNX → RKNN 格式 → NPU 推理<br>
+  <strong>优点：</strong>Rockchip 官方有 <code>rknpu2</code> 示例仓库，tiny/small 模型 RTF &lt; 0.5（用 NPU + CPU 混合推理）<br>
+  <strong>致命缺点：</strong><br>
+  <ul style="margin:8px 0 0 20px;">
+    <li>中文 CER 约 <span class="red">5.14%</span>（AISHELL-1），比 Paraformer 的 <span class="green">1.95%</span> 差 2.6 倍</li>
+    <li><span class="red">非流式</span>（encoder-decoder 全句处理后才输出），不适合实时对话</li>
+    <li>模型转换流程复杂，debug 困难</li>
+  </ul>
+</div>
+
+<h3>4.2 FunASR 原生部署</h3>
+<div class="note">
+  <strong>结论：与 sherpa-onnx 重复，无增量价值。</strong><br>
+  sherpa-onnx 已封装了 Paraformer（来自 FunASR 生态）的 ONNX 导出 + RKNN 转换，且提供了更简洁的 C++/Python API。单独部署 FunASR 意味着需要自己完成 PyTorch→ONNX→RKNN 的全流程转换和 RK3588 适配，最终效果不会超过 sherpa-onnx 已有的 Paraformer RK3588 模型。
+</div>
+
+<h3>4.3 PaddleSpeech</h3>
+<div class="note">
+  <strong>不推荐原因：</strong><br>
+  <ul style="margin:8px 0 0 20px;">
+    <li>ARM64 支持主要通过 FastDeploy，但<strong>无 RK3588 NPU 加速</strong></li>
+    <li>中文流式 ASR 模型（如 DS2）精度和速度均不如 Zipformer/Paraformer</li>
+    <li>PaddlePaddle 框架本身在 ARM64 上的安装和依赖非常重</li>
+    <li>社区在 RK3588 上几乎没有成功部署的案例</li>
+  </ul>
+</div>
+
+<h3>4.4 Vosk / DeepSpeech / Coqui</h3>
+<div class="note">
+  <strong>直接排除：</strong><br>
+  <ul style="margin:8px 0 0 20px;">
+    <li><strong>Vosk：</strong>有 ARM 支持但没有高质量中文模型，中文识别效果很差</li>
+    <li><strong>DeepSpeech：</strong>Mozilla 已停止维护，中文模型停留在 2021 年水平</li>
+    <li><strong>Coqui STT：</strong>项目已归档停止开发，同 DeepSpeech 一脉</li>
+  </ul>
+</div>
+
+<!-- ===== 实测性能数据 ===== -->
+<h2>五、RK3588 实测性能数据汇总</h2>
+
+<h3>5.1 NPU 加速模型（通过 sherpa-onnx）</h3>
+
+<div class="perf-cards">
+  <div class="perf-card streaming">
+    <div class="rtf">0.075</div>
+    <div class="model-name">Paraformer-zh (15s)</div>
+    <div class="detail">432MB · 7.8秒音频仅需0.588秒 · AISHELL-1 CER 1.95%</div>
+  </div>
+  <div class="perf-card streaming">
+    <div class="rtf">0.129</div>
+    <div class="model-name">SenseVoice (10s)</div>
+    <div class="detail">~200MB · int8量化 · 多语种</div>
+  </div>
+  <div class="perf-card streaming">
+    <div class="rtf">0.20</div>
+    <div class="model-name">Zipformer-small (流式)</div>
+    <div class="detail">44MB encoder · 中英双语 · 18s→3.5s</div>
+  </div>
+  <div class="perf-card streaming">
+    <div class="rtf">0.38</div>
+    <div class="model-name">Zipformer (流式)</div>
+    <div class="detail">132MB encoder · 中英双语 · 4.7s→1.8s</div>
+  </div>
+</div>
+
+<h3>5.2 CPU 推理对比（无 NPU 加速）</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>模型</th>
+      <th>引擎</th>
+      <th>CPU 核心</th>
+      <th>RTF</th>
+      <th>实时可用?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Zipformer-small (流式)</td>
+      <td>sherpa-onnx</td>
+      <td>1×A76</td>
+      <td>~0.50 (估算)</td>
+      <td><span class="tag-pass">✅</span></td>
+    </tr>
+    <tr>
+      <td>SenseVoice int8</td>
+      <td>ONNX Runtime</td>
+      <td>1×A76</td>
+      <td>0.100</td>
+      <td><span class="tag-pass">✅</span></td>
+    </tr>
+    <tr>
+      <td>SenseVoice int8</td>
+      <td>ONNX Runtime</td>
+      <td>1×A55</td>
+      <td>0.440</td>
+      <td><span class="tag-pass">✅</span></td>
+    </tr>
+    <tr>
+      <td>Whisper tiny (PyTorch)</td>
+      <td>PyTorch + NPU混合</td>
+      <td>CPU+NPU</td>
+      <td>&lt; 0.1</td>
+      <td><span class="tag-warn">✅ 速度够但中文差</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ===== 最终建议 ===== -->
+<h2>六、结论与建议</h2>
+
+<div class="winner-box">
+  <h3>🏆 首选方案：sherpa-onnx（唯一成熟选项）</h3>
+  <p style="margin-top:8px;">对于「中文 + 流式 + RK3588 NPU」这个组合需求，<strong>sherpa-onnx 是唯一经过官方验证的成熟方案</strong>，没有实质性的替代品。</p>
+</div>
+
+<div class="summary-grid">
+  <div class="summary-item">
+    <h4>🔄 流式对话（机器人实时交互）</h4>
+    <ul>
+      <li>首选：<strong>Zipformer-small</strong>（44MB, RTF 0.20）</li>
+      <li>备选：<strong>Zipformer</strong>（132MB, RTF 0.38, 精度更高）</li>
+      <li>均为中英双语，支持麦克风实时流式输入</li>
+    </ul>
+  </div>
+  <div class="summary-item">
+    <h4>📝 离线/高精度场景</h4>
+    <ul>
+      <li>首选：<strong>Paraformer-zh</strong>（RTF 0.075, CER 1.95%）</li>
+      <li>备选：<strong>SenseVoice</strong>（RTF 0.129, 多语种+情感识别）</li>
+      <li>需配合 VAD 分段（如 silero-vad）</li>
+    </ul>
+  </div>
+</div>
+
+<div class="verdict">
+  <span class="big">📊 最终测试矩阵</span>
+  <ul>
+    <li><strong>评估阶段（PC CPU）</strong>：Zipformer + Paraformer，AISHELL-1 + SeniorTalk 数据集</li>
+    <li><strong>部署阶段（RK3588）</strong>：换用 sherpa-onnx RKNN 版本（sherpa-onnx-rk3588-streaming-zipformer-*），调用 NPU 加速</li>
+    <li><strong>代码几乎不用改</strong>：sherpa-onnx 的 Python API 在 x86 和 ARM64 上完全一致，只需替换模型文件路径和 provider</li>
+    <li>Whisper、FunASR 原生、PaddleSpeech 等方案在 RK3588 + 中文 + 流式 三个约束下均不构成有效替代</li>
+  </ul>
+</div>
+
+<hr>
+<p style="text-align:center;color:#b2bec3;font-size:12px;">
+  数据来源：
+  <a href="https://k2-fsa.github.io/sherpa/onnx/rknn/index.html" style="color:#0984e3;">sherpa-onnx RKNN 官方文档</a>
+  &nbsp;|&nbsp;
+  <a href="https://github.com/k2-fsa/sherpa/blob/master/docs/source/onnx/rknn/models.rst" style="color:#0984e3;">RKNN 模型列表与性能数据</a>
+  &nbsp;|&nbsp;
+  <a href="https://github.com/airockchip/rknn-toolkit2/" style="color:#0984e3;">Rockchip RKNN Toolkit2</a>
+  &nbsp;|&nbsp;
+  <a href="https://blog.csdn.net/weixin_42206548/article/details/141424657" style="color:#0984e3;">Whisper RK3588 实测</a>
+</p>
+
+</div>
+</body>
+</html>

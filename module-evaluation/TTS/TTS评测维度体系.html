@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TTS 评测维度体系</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* 导航栏 */
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .navbar .container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        
+        .navbar a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* 章节 */
+        .section {
+            background: white;
+            margin: 30px 0;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .section h1 {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .section h2 {
+            color: #764ba2;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        .section blockquote {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 12px 20px;
+            margin: 15px 0;
+            color: #666;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        /* 表格样式 */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 14px;
+        }
+        
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        th {
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        
+        td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: top;
+        }
+        
+        tbody tr:hover {
+            background: #f8f9ff;
+        }
+        
+        tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+        
+        tbody tr:nth-child(even):hover {
+            background: #f0f4ff;
+        }
+        
+        /* 状态标签 */
+        .status-need {
+            color: #52c41a;
+            font-weight: 600;
+        }
+        
+        .status-optional {
+            color: #faad14;
+            font-weight: 600;
+        }
+        
+        .status-unneed {
+            color: #ff4d4f;
+            font-weight: 600;
+        }
+        
+        /* 优先级星星 */
+        .priority {
+            color: #faad14;
+            font-size: 16px;
+        }
+        
+        .priority-empty {
+            color: #d9d9d9;
+        }
+        
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+            font-size: 14px;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .navbar .container {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+            
+            table {
+                font-size: 13px;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="#table1">表1：现有评测维度</a>
+            <a href="#table2">表2：养老场景筛选</a>
+            <a href="#table3">表3：TTS测试条目</a>
+            <a href="#table4">表4：最终测试维度</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <!-- 表1 -->
+        <div class="section" id="table1">
+            <h1>表1：现有 TTS 评测维度</h1>
+            <blockquote>说明：本表仅包含 TTS 核心评测维度（输入文本 → 输出音频的质量/性能/鲁棒性）。</blockquote>
+            
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>维度类别</th>
+                            <th>维度名称</th>
+                            <th>定义</th>
+                            <th>评测方法</th>
+                            <th>合格标准</th>
+                            <th>适用场景</th>
+                            <th>示例</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>基础语音质量</td>
+                            <td>自然度（Naturalness）</td>
+                            <td>合成语音听起来是否自然、流畅，接近真人发音</td>
+                            <td>主观：MOS（平均意见得分，1-5分）<br>客观：UTMOS（AI 自动预测 MOS）</td>
+                            <td>MOS > 4.0<br>UTMOS > 3.5</td>
+                            <td>所有 TTS 场景</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>基础语音质量</td>
+                            <td>可懂度（Intelligibility）</td>
+                            <td>合成语音是否清晰可懂，听众能否准确理解内容</td>
+                            <td>主观：听写测试（Word Accuracy）<br>客观：CER/WER（通过 ASR 识别后计算错误率）</td>
+                            <td>CER < 5%<br>WER < 10%</td>
+                            <td>所有 TTS 场景</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>基础语音质量</td>
+                            <td>发音准确性（Pronunciation Accuracy）</td>
+                            <td>字音是否正确，包括多音字、生僻字、外来词等</td>
+                            <td>多音字准确率<br>数字/日期发音准确率<br>标点符号韵律</td>
+                            <td>多音字准确率 > 95%</td>
+                            <td>中文 TTS 特有</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>基础语音质量</td>
+                            <td>韵律自然度（Prosody Naturalness）</td>
+                            <td>语调、重音、停顿是否自然，符合语言习惯</td>
+                            <td>停顿位置准确率<br>语调自然度（陈述句、疑问句、感叹句）<br>重音位置准确性</td>
+                            <td>停顿位置准确率 > 92%</td>
+                            <td>对话场景、有声读物</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>基础语音质量</td>
+                            <td>频谱失真度（Spectral Distortion）</td>
+                            <td>合成语音与原始语音在频谱上的差异</td>
+                            <td>SD（Spectral Distortion）< 0.15<br>PESQ（感知语音质量评估）</td>
+                            <td>SD < 0.15<br>PESQ > 3.5</td>
+                            <td>语音克隆、音色迁移</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>基础语音质量</td>
+                            <td>基频跟踪误差（F0 RMSE）</td>
+                            <td>合成语音的基频（音调）与目标基频的误差</td>
+                            <td>F0 RMSE（Root Mean Square Error）</td>
+                            <td>F0 RMSE < 15Hz</td>
+                            <td>情感 TTS、歌声合成</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>交互能力</td>
+                            <td>首字延迟（TTFT）</td>
+                            <td>从输入文本到开始播放第一个字的延迟</td>
+                            <td>时间戳测量（输入时间戳 vs 音频输出时间戳）</td>
+                            <td>普通场景：< 300ms<br>实时对话：< 200ms<br>流式 TTS：< 100ms</td>
+                            <td>实时对话、语音助手</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>交互能力</td>
+                            <td>生成速度（Tokens/sec 或 RTF）</td>
+                            <td>TTS 合成速度，是否支持实时播放</td>
+                            <td>RTF（Real-Time Factor）= 合成时间 / 音频时长<br>Tokens/sec = 每秒生成的音频采样点数</td>
+                            <td>RTF < 1（实时）<br>RTF < 0.5（流畅）</td>
+                            <td>所有 TTS 场景</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>交互能力</td>
+                            <td>打断响应及时率</td>
+                            <td>用户插话时，系统能否及时停止当前合成并切换至聆听状态</td>
+                            <td>打断响应延迟测量<br>打断响应及时率 = 及时响应次数 / 总打断次数</td>
+                            <td>响应延迟 < 200ms<br>及时率 > 95%</td>
+                            <td>语音助手、对话机器人</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>鲁棒性</td>
+                            <td>长文本合成稳定性</td>
+                            <td>长文本合成时，音质是否稳定，是否出现断句错误、重复、遗漏等</td>
+                            <td>长文本（> 500 字）合成成功率<br>断句错误率<br>重复/遗漏率</td>
+                            <td>长文本合成成功率 > 95%</td>
+                            <td>有声读物、长文本播报</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>11</td>
+                            <td>鲁棒性</td>
+                            <td>抗噪能力</td>
+                            <td>在噪声环境下，合成语音是否仍然清晰可懂</td>
+                            <td>不同信噪比（SNR）下的 CER<br>频谱失真度（SD）</td>
+                            <td>60dB 噪声下，质量得分下降 < 18%</td>
+                            <td>车载、户外、工业环境</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>12</td>
+                            <td>中文特有</td>
+                            <td>多音字准确率</td>
+                            <td>多音字是否根据上下文选择正确的读音</td>
+                            <td>多音字测试集（至少 100 个多音字）</td>
+                            <td>多音字准确率 > 95%</td>
+                            <td>中文 TTS 特有</td>
+                            <td>"银行" vs "行走"（"行"的读音）<br>"重量" vs "重复"（"重"的读音）</td>
+                        </tr>
+                        <tr>
+                            <td>13</td>
+                            <td>中文特有</td>
+                            <td>数字与符号发音</td>
+                            <td>数字、日期、符号等是否发音正确</td>
+                            <td>数字/符号测试集（至少 50 条）</td>
+                            <td>数字/符号发音准确率 > 95%</td>
+                            <td>中文 TTS 特有</td>
+                            <td>"2024年" → "二零二四年"<br>"137号" → "一三七号"<br>"3.14" → "三点一四"</td>
+                        </tr>
+                        <tr>
+                            <td>14</td>
+                            <td>中文特有</td>
+                            <td>标点符号韵律</td>
+                            <td>标点符号是否正确影响停顿和语调</td>
+                            <td>标点测试集（至少 50 条）</td>
+                            <td>标点韵律正确率 > 90%</td>
+                            <td>中文 TTS 特有</td>
+                            <td>逗号（，）→ 短停顿<br>句号（。）→ 长停顿 + 降调<br>问号（？）→ 升调<br>感叹号（！）→ 强调 + 降调</td>
+                        </tr>
+                        <tr>
+                            <td>15</td>
+                            <td>中文特有</td>
+                            <td>方言与口音适应性</td>
+                            <td>对方言或口音输入的适应能力</td>
+                            <td>方言/口音测试集</td>
+                            <td>方言/口音输入的可懂度 > 80%</td>
+                            <td>中文 TTS 特有</td>
+                            <td>粤语、闽南语、四川话等方言输入<br>带口音的普通话输入</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <h2>维度分类统计</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>维度类别</th>
+                            <th>数量</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>基础语音质量</td><td>6 个</td></tr>
+                        <tr><td>交互能力</td><td>3 个</td></tr>
+                        <tr><td>鲁棒性</td><td>2 个</td></tr>
+                        <tr><td>中文特有</td><td>4 个</td></tr>
+                        <tr style="font-weight: 600; background: #f0f4ff;"><td>合计</td><td>15 个</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- 表2 -->
+        <div class="section" id="table2">
+            <h1>表2：中文养老场景 TTS 评测维度筛选</h1>
+            <blockquote>场景说明：养老陪伴机器人，用户为老年人，核心需求是情感陪伴、日常对话、紧急求助。</blockquote>
+            
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>维度名称</th>
+                            <th>是否需要</th>
+                            <th>优先级</th>
+                            <th>原因</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>自然度（Naturalness）</td>
+                            <td class="status-need">✅ 需要</td>
+                            <td><span class="priority">⭐⭐⭐</span></td>
+                            <td>老人每天长时间对话，音质差会引起疲劳和不适</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>可懂度（Intelligibility）</td>
+                            <td class="status-need">✅ 需要</td>
+                            <td><span class="priority">⭐⭐⭐</span></td>
+                            <td>老人听力可能下降，必须确保语音清晰可懂</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>发音准确性（Pronunciation Accuracy）</td>
+                            <td class="status-need">✅ 需要</td>
+                            <td><span class="priority">⭐⭐</span></td>
+                            <td>中文多音字多，发音错误会影响理解</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>韵律自然度（Prosody Naturalness）</td>
+                            <td class="status-need">✅ 需要</td>
+                            <td><span class="priority">⭐⭐</span></td>
+                            <td>自然的停顿和语调让老人感觉舒适，避免机械感</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>频谱失真度（Spectral Distortion）</td>
+                            <td class="status-unneed">❌ 不需要</td>
+                            <td>-</td>
+                            <td>养老场景不做语音克隆，不关注频谱细节</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>基频跟踪误差（F0 RMSE）</td>
+                            <td class="status-unneed">❌ 不需要</td>
+                            <td>-</td>
+                            <td>养老场景不需要精确控制音调</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>首字延迟（TTFT）</td>
+                            <td class="status-need">✅ 需要</td>
+                            <td><span class="priority">⭐⭐⭐</span></td>
+                            <td>老人对延迟敏感，延迟高会以为机器人"没听懂"或"卡住了"</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>生成速度（RTF）</td>
+                            <td class="status-need">✅ 需要</td>
+                            <td><span class="priority">⭐⭐</span></td>
+                            <td>需要实时播放，避免等待（RTF < 1）</td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>打断响应及时率</td>
+                            <td class="status-need">✅ 需要</td>
+                            <td><span class="priority">⭐⭐⭐</span></td>
+                            <td>老人可能随时插话、纠正、提问，必须能及时停止并聆听</td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>长文本合成稳定性</td>
+                            <td class="status-unneed">❌ 不需要</td>
+                            <td>-</td>
+                            <td>养老场景通常短对话，长文本场景少（如有声读物才需要）</td>
+                        </tr>
+                        <tr>
+                            <td>11</td>
+                            <td>抗噪能力</td>
+                            <td class="status-need">✅ 需要</td>
+                            <td><span class="priority">⭐⭐</span></td>
+                            <td>家庭环境有电视声、厨房噪音等，需要保证可懂度</td>
+                        </tr>
+                        <tr>
+                            <td>12</td>
+                            <td>多音字准确率</td>
+                            <td class="status-need">✅ 需要</td>
+                            <td><span class="priority">⭐⭐</span></td>
+                            <td>中文特有，多音字读错会严重影响理解（如"银行"vs"行走"）</td>
+                        </tr>
+                        <tr>
+                            <td>13</td>
+                            <td>数字与符号发音</td>
+                            <td class="status-need">✅ 需要</td>
+                            <td><span class="priority">⭐⭐</span></td>
+                            <td>老人常说电话号码、日期、药量等，数字发音必须准确</td>
+                        </tr>
+                        <tr>
+                            <td>14</td>
+                            <td>标点符号韵律</td>
+                            <td class="status-need">✅ 需要</td>
+                            <td><span class="priority">⭐⭐</span></td>
+                            <td>逗号、句号、问号的停顿和语调影响自然度和可懂度</td>
+                        </tr>
+                        <tr>
+                            <td>15</td>
+                            <td>方言与口音适应性</td>
+                            <td class="status-need">✅ 需要</td>
+                            <td><span class="priority">⭐</span></td>
+                            <td>老人可能说方言（粤语、闽南语、四川话等），需要适配</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- 表3 -->
+        <div class="section" id="table3">
+            <h1>表3：TTS 测试条目（基于 TTS评判标准.md）</h1>
+            <blockquote>说明：本表仅包含从 TTS评判标准.md 中提取的 TTS 测试条目。</blockquote>
+            
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>维度类别</th>
+                            <th>维度名称</th>
+                            <th>定义</th>
+                            <th>评测方法</th>
+                            <th>合格标准</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>速度指标</td>
+                            <td>首包延迟（TTFT）</td>
+                            <td>收到文本后，到输出第一帧音频的时间</td>
+                            <td>时间戳测量（收到文本时间戳 vs 输出第一帧音频时间戳）</td>
+                            <td><strong>优秀</strong>：<= 150ms<br><strong>良好</strong>：150ms ~ 300ms<br><strong>可接受</strong>：300ms ~ 500ms<br><strong>偏差</strong>：> 500ms</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>速度指标</td>
+                            <td>流式合成能力</td>
+                            <td>LLM 逐步吐字时，TTS 能否逐步接收并连续生成语音</td>
+                            <td>1. 是否原生支持 streaming input<br>2. 每个 chunk 到音频输出的延迟<br>3. 长句合成是否中断</td>
+                            <td>支持流式输入，延迟低，长句合成不中断</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>速度指标</td>
+                            <td>实时率（RTF）</td>
+                            <td>生成音频长度与合成耗时的比例</td>
+                            <td>RTF = 合成时间 / 音频时长</td>
+                            <td><strong>优秀</strong>：< 0.1<br><strong>良好</strong>：0.1 ~ 0.3<br><strong>可接受</strong>：0.3 ~ 0.5<br><strong>偏差</strong>：> 0.5</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>效果指标</td>
+                            <td>自然度（MOS）</td>
+                            <td>听感是否自然，是否接近真人</td>
+                            <td>主观 MOS 打分（1-5 分），至少 3 人评分取平均值</td>
+                            <td><strong>优秀</strong>：>= 4.2<br><strong>良好</strong>：3.8 ~ 4.2<br><strong>可接受</strong>：3.3 ~ 3.8<br><strong>偏差</strong>：< 3.3</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>效果指标</td>
+                            <td>情感表现力</td>
+                            <td>是否能根据语义和语气切换到更自然的表达方式</td>
+                            <td>使用情感句测试（高兴、安慰、道歉、提醒、紧急告知）</td>
+                            <td>情感表达自然，与文本内容匹配</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>效果指标</td>
+                            <td>停顿处理</td>
+                            <td>长句中能否合理分段、呼吸和停顿</td>
+                            <td>1. 是否一口气读完整句<br>2. 停顿位置是否自然<br>3. 标点和语义边界是否反映到语音中</td>
+                            <td>停顿位置自然，标点和语义边界正确反映</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>效果指标</td>
+                            <td>中文口语适配性</td>
+                            <td>对于中文聊天文本，是否存在生硬停顿、语调平板、中英文混读异常、数字日期称谓读法不自然</td>
+                            <td>使用中文聊天文本测试，观察：<br>1. 生硬停顿<br>2. 语调平板<br>3. 中英文混读异常<br>4. 数字、日期、称谓读法不自然</td>
+                            <td>无生硬停顿，语调自然，中英文混读正常，数字日期称谓读法自然</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- 表4 -->
+        <div class="section" id="table4">
+            <h1>表4：TTS 最终测试维度（养老场景）</h1>
+            <blockquote>说明：整合表2（养老场景筛选结果）和表3（TTS评判标准），去重后生成最终测试维度。</blockquote>
+            
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>维度类别</th>
+                            <th>维度名称</th>
+                            <th>定义</th>
+                            <th>评测方法</th>
+                            <th>合格标准</th>
+                            <th>优先级</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>效果指标</td>
+                            <td>自然度（MOS）</td>
+                            <td>听感是否自然，是否接近真人</td>
+                            <td>主观 MOS 打分（1-5 分），至少 3 人评分取平均值</td>
+                            <td><strong>优秀</strong>：>= 4.2<br><strong>良好</strong>：3.8 ~ 4.2<br><strong>可接受</strong>：3.3 ~ 3.8<br><strong>偏差</strong>：< 3.3</td>
+                            <td><span class="priority">⭐⭐⭐</span></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>效果指标</td>
+                            <td>可懂度（Intelligibility）</td>
+                            <td>合成语音是否清晰可懂，听众能否准确理解内容</td>
+                            <td>主观：听写测试<br>客观：CER/WER（通过 ASR 识别后计算错误率）</td>
+                            <td>CER < 5%<br>WER < 10%</td>
+                            <td><span class="priority">⭐⭐⭐</span></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>效果指标</td>
+                            <td>发音准确性</td>
+                            <td>字音是否正确，包括多音字、数字、符号、标点韵律</td>
+                            <td>多音字测试集（100+ 条）<br>数字/符号测试集（50+ 条）<br>标点测试集（50+ 条）</td>
+                            <td>多音字准确率 > 95%<br>数字/符号发音准确率 > 95%<br>标点韵律正确率 > 90%</td>
+                            <td><span class="priority">⭐⭐</span></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>效果指标</td>
+                            <td>韵律自然度（停顿处理）</td>
+                            <td>语调、重音、停顿是否自然，长句能否合理分段</td>
+                            <td>1. 是否一口气读完整句<br>2. 停顿位置是否自然<br>3. 标点和语义边界是否反映到语音中</td>
+                            <td>停顿位置准确率 > 92%</td>
+                            <td><span class="priority">⭐⭐</span></td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>效果指标</td>
+                            <td>情感表现力</td>
+                            <td>是否能根据语义和语气切换到更自然的表达方式</td>
+                            <td>使用情感句测试（高兴、安慰、道歉、提醒、紧急告知）</td>
+                            <td>情感表达自然，与文本内容匹配</td>
+                            <td><span class="priority">⭐⭐</span></td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>效果指标</td>
+                            <td>中文口语适配性</td>
+                            <td>对于中文聊天文本，是否存在生硬停顿、语调平板、中英文混读异常、数字日期称谓读法不自然</td>
+                            <td>使用中文聊天文本测试，观察：<br>1. 生硬停顿<br>2. 语调平板<br>3. 中英文混读异常<br>4. 数字、日期、称谓读法不自然</td>
+                            <td>无生硬停顿，语调自然，中英文混读正常，数字日期称谓读法自然</td>
+                            <td><span class="priority">⭐⭐</span></td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>速度指标</td>
+                            <td>首字延迟（TTFT/首包延迟）</td>
+                            <td>收到文本后，到输出第一帧音频的时间</td>
+                            <td>时间戳测量（收到文本时间戳 vs 输出第一帧音频时间戳）</td>
+                            <td><strong>优秀</strong>：<= 150ms<br><strong>良好</strong>：150ms ~ 300ms<br><strong>可接受</strong>：300ms ~ 500ms<br><strong>偏差</strong>：> 500ms</td>
+                            <td><span class="priority">⭐⭐⭐</span></td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>速度指标</td>
+                            <td>生成速度（RTF/实时率）</td>
+                            <td>生成音频长度与合成耗时的比例</td>
+                            <td>RTF = 合成时间 / 音频时长</td>
+                            <td><strong>优秀</strong>：< 0.1<br><strong>良好</strong>：0.1 ~ 0.3<br><strong>可接受</strong>：0.3 ~ 0.5<br><strong>偏差</strong>：> 0.5</td>
+                            <td><span class="priority">⭐⭐</span></td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>速度指标</td>
+                            <td>流式合成能力</td>
+                            <td>LLM 逐步吐字时，TTS 能否逐步接收并连续生成语音</td>
+                            <td>1. 是否原生支持 streaming input<br>2. 每个 chunk 到音频输出的延迟<br>3. 长句合成是否中断</td>
+                            <td>支持流式输入，延迟低，长句合成不中断</td>
+                            <td><span class="priority">⭐</span></td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>交互能力</td>
+                            <td>打断响应及时率</td>
+                            <td>用户插话时，系统能否及时停止当前合成并切换至聆听状态</td>
+                            <td>打断响应延迟测量<br>打断响应及时率 = 及时响应次数 / 总打断次数</td>
+                            <td>响应延迟 < 200ms<br>及时率 > 95%</td>
+                            <td><span class="priority">⭐⭐⭐</span></td>
+                        </tr>
+                        <tr>
+                            <td>11</td>
+                            <td>鲁棒性</td>
+                            <td>抗噪能力</td>
+                            <td>在噪声环境下，合成语音是否仍然清晰可懂</td>
+                            <td>不同信噪比（SNR）下的 CER<br>频谱失真度（SD）</td>
+                            <td>60dB 噪声下，质量得分下降 < 18%</td>
+                            <td><span class="priority">⭐⭐</span></td>
+                        </tr>
+                        <tr>
+                            <td>12</td>
+                            <td>中文特有</td>
+                            <td>方言与口音适应性</td>
+                            <td>对方言或口音输入的适应能力</td>
+                            <td>方言/口音测试集</td>
+                            <td>方言/口音输入的可懂度 > 80%</td>
+                            <td><span class="priority">⭐</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>TTS 评测维度体系 - 养老陪伴机器人场景</p>
+            <p>生成时间：2026年6月</p>
+        </div>
+    </div>
+</body>
+</html>

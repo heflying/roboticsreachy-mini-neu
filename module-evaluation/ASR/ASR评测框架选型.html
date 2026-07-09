@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASR 评测框架选型</title>
+<style>
+  :root {
+    --bg: #f8f9fa;
+    --card: #ffffff;
+    --text: #1a1a2e;
+    --muted: #6c757d;
+    --border: #dee2e6;
+    --accent: #2563eb;
+    --green: #059669;
+    --red: #dc2626;
+    --amber: #d97706;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 40px 20px;
+  }
+  .container { max-width: 960px; margin: 0 auto; }
+
+  h1 {
+    font-size: 28px; text-align: center; margin-bottom: 8px;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .subtitle { text-align: center; color: var(--muted); margin-bottom: 40px; font-size: 14px; }
+
+  h2 {
+    font-size: 20px; margin: 36px 0 16px;
+    padding-bottom: 8px; border-bottom: 2px solid var(--border);
+  }
+  h3 { font-size: 16px; margin: 20px 0 10px; color: var(--accent); }
+
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 24px; margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+  }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; }
+  th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  th { background: #f1f5f9; font-weight: 600; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+
+  .tag { display:inline-block; padding:2px 10px; border-radius:12px; font-size:12px; font-weight:600; }
+  .tag-keep { background: #d1fae5; color: var(--green); }
+  .tag-drop { background: #fee2e2; color: var(--red); }
+  .tag-partial { background: #fef3c7; color: var(--amber); }
+
+  .architecture {
+    background: #0f172a; color: #e2e8f0;
+    border-radius: 10px; padding: 24px;
+    font-family: "Cascadia Code", "Fira Code", "Consolas", monospace;
+    font-size: 13px; line-height: 1.8;
+    overflow-x: auto; white-space: pre;
+  }
+
+  .step { display: flex; gap: 16px; margin-bottom: 12px; align-items: flex-start; }
+  .step-num {
+    min-width: 32px; height: 32px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; flex-shrink: 0;
+  }
+  .step-body { flex: 1; }
+  .step-title { font-weight: 600; margin-bottom: 2px; }
+  .step-desc { color: var(--muted); font-size: 14px; }
+
+  .verdict-box {
+    background: linear-gradient(135deg, #ecfdf5, #eff6ff);
+    border: 2px solid var(--green);
+    border-radius: 12px; padding: 24px;
+    margin-top: 24px;
+  }
+  .verdict-box h3 { color: var(--green); margin-top: 0; }
+
+  .note {
+    background: #fffbeb; border-left: 3px solid var(--amber);
+    padding: 12px 16px; margin: 16px 0; font-size: 14px; border-radius: 0 6px 6px 0;
+  }
+
+  @media (max-width: 640px) { body { padding: 20px 12px; } }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>ASR 评测框架选型报告</h1>
+<p class="subtitle">基于「表4 最终评测指标」的 9 大类、29 项指标需求</p>
+
+<!-- 一、问题定义 -->
+<h2>一、评测体系需要什么能力</h2>
+
+<div class="card">
+<table>
+  <tr><th>需求层</th><th>做什么</th><th>对应指标</th></tr>
+  <tr>
+    <td><strong>音频条件构造</strong></td>
+    <td>在干净测试音频上叠加噪声、变速、加混响等</td>
+    <td>噪声鲁棒性、语速鲁棒性、远场退化</td>
+  </tr>
+  <tr>
+    <td><strong>ASR 推理</strong></td>
+    <td>把音频转成文本（支持流式，用于实时性测量）</td>
+    <td>所有指标的上游输入</td>
+  </tr>
+  <tr>
+    <td><strong>文本对齐与评分</strong></td>
+    <td>比对参考文本 vs 识别文本，算 CER 并拆解 Sub/Del/Ins/Hits</td>
+    <td>准确率、诊断</td>
+  </tr>
+  <tr>
+    <td><strong>时间打点</strong></td>
+    <td>记录推理关键时刻的时间戳</td>
+    <td>RTF / TTFC / 收敛延迟 / E2E Latency</td>
+  </tr>
+</table>
+<div class="note">
+  <strong>核心发现</strong>：没有单一框架能覆盖这四层。评测体系天然跨域（音频处理 + 模型推理 + 文本评分 + 时间测量），必须分层选工具。
+</div>
+</div>
+
+<!-- 二、候选框架 -->
+<h2>二、候选框架全景</h2>
+
+<h3>2.1 文本评分层</h3>
+<div class="card">
+<table>
+  <tr><th>框架</th><th>CER</th><th>Sub/Del/Ins</th><th>中文友好</th><th>集成难度</th><th>评判</th></tr>
+  <tr>
+    <td><strong>jiwer</strong></td>
+    <td>✅</td><td>✅ 原生拆分</td><td>✅ 逐字分词即可</td><td>极低（pip install）</td>
+    <td><span class="tag tag-keep">选用</span></td>
+  </tr>
+  <tr>
+    <td>ESPnet eval</td>
+    <td>✅</td><td>⚠️ 需自己拆</td><td>✅</td><td>高（依赖 ESPnet 生态）</td>
+    <td><span class="tag tag-drop">不选</span></td>
+  </tr>
+  <tr>
+    <td>SpeechBrain</td>
+    <td>✅</td><td>⚠️ 需自己拆</td><td>✅</td><td>高</td>
+    <td><span class="tag tag-drop">不选</span></td>
+  </tr>
+  <tr>
+    <td>自定义编辑距离</td>
+    <td>✅</td><td>✅</td><td>✅</td><td>中等（造轮子）</td>
+    <td><span class="tag tag-drop">不选</span></td>
+  </tr>
+</table>
+<p style="color:var(--muted);font-size:13px;margin-top:8px;">
+  <strong>选择 jiwer 的理由</strong>：唯一一个「pip install 即用 + 原生输出 Sub/Del/Ins/Hits 拆分」的库。底层调用 RapidFuzz（C++ 编辑距离），速度快。中文只需按字符切分即可。
+</p>
+</div>
+
+<h3>2.2 音频条件构造层</h3>
+<div class="card">
+<table>
+  <tr><th>框架</th><th>加噪声</th><th>变速</th><th>远场模拟</th><th>SNR 控制</th><th>评判</th></tr>
+  <tr>
+    <td><strong>audiomentations</strong></td>
+    <td>✅ 白噪/背景/脉冲</td><td>✅ TimeStretch</td><td>✅ RIR 卷积</td><td>✅ 精确 dB</td>
+    <td><span class="tag tag-keep">选用</span></td>
+  </tr>
+  <tr>
+    <td>torchaudio</td>
+    <td>✅ 基础</td><td>✅ SpeedPerturb</td><td>⚠️ 需额外库</td><td>⚠️ 手动</td>
+    <td><span class="tag tag-drop">不选</span></td>
+  </tr>
+  <tr>
+    <td>librosa</td>
+    <td>⚠️ 需手写</td><td>✅ time_stretch</td><td>❌</td><td>⚠️ 手动</td>
+    <td><span class="tag tag-drop">不选</span></td>
+  </tr>
+  <tr>
+    <td>pydub</td>
+    <td>⚠️ 基础叠加</td><td>✅ 变速</td><td>❌</td><td>❌ 无精确 SNR</td>
+    <td><span class="tag tag-drop">不选</span></td>
+  </tr>
+  <tr>
+    <td>pedalboard</td>
+    <td>✅ 音频效果</td><td>❌</td><td>❌</td><td>❌</td>
+    <td><span class="tag tag-drop">不选</span></td>
+  </tr>
+</table>
+<p style="color:var(--muted);font-size:13px;margin-top:8px;">
+  <strong>选择 audiomentations 的理由</strong>：唯一一个同时覆盖「任意噪声叠加 + 精确 SNR 控制 + 变速 + RIR 远场模拟」的库。API 与图像增强库 albumentations 一致，一个 transform pipeline 即可完成多条件构造。
+</p>
+</div>
+
+<h3>2.3 ASR 推理层</h3>
+<div class="card">
+<table>
+  <tr><th>框架</th><th>流式支持</th><th>多模型</th><th>ONNX/无GPU</th><th>Python API</th><th>评判</th></tr>
+  <tr>
+    <td><strong>sherpa-onnx</strong></td>
+    <td>✅ 原生流式</td><td>✅ Paraformer/SenseVoice/Whisper 等</td><td>✅ ONNX，CPU 可跑</td><td>✅</td>
+    <td><span class="tag tag-keep">选用</span></td>
+  </tr>
+  <tr>
+    <td>FunASR</td>
+    <td>⚠️ 需额外配置</td><td>✅ 丰富</td><td>⚠️ 部分模型需 GPU</td><td>✅</td>
+    <td><span class="tag tag-drop">不选</span></td>
+  </tr>
+  <tr>
+    <td>Whisper (openai)</td>
+    <td>❌ 非流式</td><td>❌ 单一</td><td>⚠️ 较大</td><td>✅</td>
+    <td><span class="tag tag-drop">不选</span></td>
+  </tr>
+  <tr>
+    <td>ESPnet</td>
+    <td>⚠️ 仅部分模型</td><td>✅</td><td>❌ 需 GPU</td><td>✅</td>
+    <td><span class="tag tag-drop">不选</span></td>
+  </tr>
+  <tr>
+    <td>faster-whisper</td>
+    <td>❌ 非流式</td><td>❌ 单一</td><td>✅ CTranslate2</td><td>✅</td>
+    <td><span class="tag tag-drop">不选</span></td>
+  </tr>
+</table>
+<p style="color:var(--muted);font-size:13px;margin-top:8px;">
+  <strong>选择 sherpa-onnx 的理由</strong>：原生流式推理是核心——评测需要 TTFC 和收敛延迟，非流式 ASR 根本测不了这两个指标。ONNX 格式确保评测环境灵活（有无 GPU 均可）。同时支持 Paraformer（中文最强之一）和 SenseVoice（带情感/事件检测）等多模型，便于横向对比。
+</p>
+</div>
+
+<h3>2.4 实时性打点</h3>
+<div class="card">
+<p>
+  <strong>无现成框架</strong>，需要基于 sherpa-onnx 的流式 API 自定义脚本。
+</p>
+<p style="color:var(--muted);font-size:13px;margin-top:8px;">
+  大约 80~120 行 Python：hook 推理开始/结束时间戳，记录流式回调中首次文本到达和文本 hash 收敛的时刻。
+</p>
+</div>
+
+<!-- 三、最终架构 -->
+<h2>三、最终选型架构</h2>
+
+<div class="architecture">
+┌─────────────────────────────────────────────────────────┐
+│                                                         │
+│  ① audiomentations ──► ② sherpa-onnx ──► ③ jiwer        │
+│     (构造条件)            (推理)             (评分)       │
+│                                                         │
+│  ┌──────────────┐    ┌──────────────┐    ┌────────────┐ │
+│  │ AddGaussian  │    │ Paraformer   │    │ CER        │ │
+│  │ AddBgNoise   │───►│ SenseVoice   │───►│ SER        │ │
+│  │ TimeStretch  │    │ Whisper      │    │ Sub Rate   │ │
+│  │ RIR          │    │     ...      │    │ Del Rate   │ │
+│  └──────┬───────┘    └──────┬───────┘    │ Ins Rate   │ │
+│         │                   │            │ Hits       │ │
+│         │              ╔════╧════╗       └─────┬──────┘ │
+│         │              ║ 实时打点 ║            │        │
+│         │              ║ RTF     ║            │        │
+│         │              ║ TTFC    ║            │        │
+│         │              ║ 收敛延迟║            │        │
+│         │              ║ E2E     ║            │        │
+│         │              ╚═════════╝            │        │
+│         │                   │                 │        │
+│         └───────────────────┴─────────────────┘        │
+│                   评测管线串联                            │
+└─────────────────────────────────────────────────────────┘
+</div>
+
+<!-- 四、覆盖矩阵 -->
+<h2>四、指标覆盖率矩阵</h2>
+
+<div class="card">
+<table>
+  <tr><th>表4 大类</th><th>指标数</th><th>audiomentations</th><th>sherpa-onnx</th><th>jiwer</th><th>自定义脚本</th></tr>
+  <tr>
+    <td>准确率</td><td>3</td><td>—</td><td>—</td><td>✅ 全部</td><td>—</td>
+  </tr>
+  <tr>
+    <td>诊断</td><td>4</td><td>—</td><td>—</td><td>✅ 全部</td><td>—</td>
+  </tr>
+  <tr>
+    <td>实时性</td><td>4</td><td>—</td><td>✅ 流式 API</td><td>—</td><td>✅ 全部</td>
+  </tr>
+  <tr>
+    <td>噪声鲁棒性</td><td>5</td><td>✅ 构造噪声</td><td>✅ 推理</td><td>✅ 算 ΔCER</td><td>—</td>
+  </tr>
+  <tr>
+    <td>语速鲁棒性</td><td>3</td><td>✅ 变速</td><td>✅ 推理</td><td>✅ 算 ΔCER</td><td>—</td>
+  </tr>
+  <tr>
+    <td>方言口音</td><td>2</td><td>—</td><td>✅ 方言模型</td><td>✅ 算 CER</td><td>—</td>
+  </tr>
+  <tr>
+    <td>多说话人</td><td>2</td><td>—</td><td>⚠️ 需额外 VAD</td><td>✅ 算 CER</td><td>—</td>
+  </tr>
+  <tr>
+    <td>垂类适配</td><td>3</td><td>—</td><td>✅ 推理</td><td>✅ CGI/WER</td><td>✅ 关键词匹配</td>
+  </tr>
+  <tr>
+    <td>场景专项</td><td>3</td><td>✅ RIR 远场</td><td>✅ 推理</td><td>✅ 算 CER</td><td>✅ 人工评测</td>
+  </tr>
+  <tr style="background:#f1f5f9; font-weight:600;">
+    <td>合计</td><td>29</td><td>覆盖 8 项</td><td>核心推理</td><td>覆盖 27 项</td><td>覆盖 5 项</td>
+  </tr>
+</table>
+</div>
+
+<!-- 五、为什么不选其他 -->
+<h2>五、为什么排除其他热门框架</h2>
+
+<div class="card">
+<table>
+  <tr><th>框架</th><th>排除原因</th></tr>
+  <tr>
+    <td><strong>FunASR</strong></td>
+    <td>
+      定位是推理框架而非评测框架。它能跑多种 ASR 模型，但评测能力薄弱（无原生 Sub/Del/Ins 拆分，无噪声构造）。与 sherpa-onnx 功能重叠但 sherpa-onnx 流式支持更好、依赖更轻。
+    </td>
+  </tr>
+  <tr>
+    <td><strong>ESPnet</strong></td>
+    <td>
+      学术级全链路工具，功能强大但太重。安装需配置 Kaldi 依赖，主要面向模型训练而非评测。评测脚本是其 recipe 的一部分，难以独立使用。
+    </td>
+  </tr>
+  <tr>
+    <td><strong>SpeechBrain</strong></td>
+    <td>
+      同 ESPnet，面向训练而非评测。需 PyTorch + GPU，与轻量评测场景不匹配。
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Whisper / faster-whisper</strong></td>
+    <td>
+      不支持流式推理。无法测量 TTFC 和收敛延迟——这两个是养老机器人场景的关键实时性指标。
+    </td>
+  </tr>
+  <tr>
+    <td><strong>EVAL-ASR (IEEE 2025)</strong></td>
+    <td>
+      论文刚发表，开源代码尚未确认。理念与我们的评测体系最接近（多维度中文 ASR 评估），待其开源后可作为参考框架叠加。
+    </td>
+  </tr>
+</table>
+</div>
+
+<!-- 最终结论 -->
+<div class="verdict-box">
+<h3>✅ 最终选型结论</h3>
+
+<div class="step">
+  <div class="step-num">1</div>
+  <div class="step-body">
+    <div class="step-title">audiomentations — 音频条件构造</div>
+    <div class="step-desc">唯一同时覆盖噪声叠加（精确 SNR）、变速、远场模拟的工具。pip install 即可。</div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">2</div>
+  <div class="step-body">
+    <div class="step-title">sherpa-onnx — ASR 推理引擎</div>
+    <div class="step-desc">原生流式推理是选择它的核心原因（非流式无法测 TTFC/收敛延迟）。ONNX 格式，CPU 可跑，支持多模型横向对比。</div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">3</div>
+  <div class="step-body">
+    <div class="step-title">jiwer — 文本对齐与评分</div>
+    <div class="step-desc">唯一轻量级输出 CER + Sub/Del/Ins/Hits 完整诊断拆解的库。底层 C++ 编辑距离，快且准。</div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">4</div>
+  <div class="step-body">
+    <div class="step-title">自定义打点脚本 — 实时性测量</div>
+    <div class="step-desc">基于 sherpa-onnx 流式回调，约 80~120 行 Python，测量 RTF / TTFC / 收敛延迟 / E2E Latency。</div>
+  </div>
+</div>
+
+<p style="margin-top:16px; color:var(--muted); font-size:13px;">
+  <strong>原则</strong>：每个领域选该领域最专精的工具，不做大而全的框架绑定。
+  三个库加起来 <code>pip install audiomentations sherpa-onnx jiwer</code> 一行命令即可安装完毕。
+</p>
+
+</div>
+
+</div>
+</body>
+</html>

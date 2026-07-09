@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>LLM评测工具对比分析</title>
+<style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+        line-height: 1.6;
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 20px;
+        color: #24292e;
+        background-color: #fff;
+    }
+    h1 { border-bottom: 2px solid #eaecef; padding-bottom: .3em; }
+    h2 { border-bottom: 1px solid #eaecef; padding-bottom: .3em; margin-top: 36px; }
+    h3 { margin-top: 28px; color: #0366d6; }
+    hr { border: none; border-top: 2px dashed #eaecef; margin: 40px 0; }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 16px 0;
+        font-size: 14px;
+    }
+    table th, table td {
+        border: 1px solid #dfe2e5;
+        padding: 10px 12px;
+        text-align: left;
+        vertical-align: top;
+    }
+    table th { 
+        background-color: #f6f8fa; 
+        font-weight: 600; 
+        color: #24292e;
+    }
+    table tr:nth-child(even) { background-color: #f9f9f9; }
+    table tr:hover { background-color: #f1f8ff; }
+    
+    .recommendation { 
+        background: #d4edda; 
+        border-left: 4px solid #28a745; 
+        padding: 12px 16px; 
+        margin: 16px 0; 
+        border-radius: 4px; 
+    }
+    .warning { 
+        background: #fff3cd; 
+        border-left: 4px solid #ffc107; 
+        padding: 12px 16px; 
+        margin: 16px 0; 
+        border-radius: 4px; 
+    }
+    .info-box { 
+        background: #d1ecf1; 
+        border-left: 4px solid #17a2b8; 
+        padding: 12px 16px; 
+        margin: 16px 0; 
+        border-radius: 4px; 
+    }
+    .pros { color: #28a745; font-weight: bold; }
+    .cons { color: #dc3545; font-weight: bold; }
+    .neutral { color: #6c757d; font-weight: bold; }
+    
+    .score-5 { color: #28a745; font-weight: bold; }
+    .score-4 { color: #17a2b8; font-weight: bold; }
+    .score-3 { color: #ffc107; font-weight: bold; }
+    .score-2 { color: #fd7e14; font-weight: bold; }
+    .score-1 { color: #dc3545; font-weight: bold; }
+    
+    .framework-card {
+        border: 1px solid #dfe2e5;
+        border-radius: 6px;
+        padding: 16px;
+        margin: 16px 0;
+        background: #f8f9fa;
+    }
+    .framework-card h3 {
+        margin-top: 0;
+        color: #0366d6;
+    }
+    .badge-recommended {
+        background: #28a745;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    .badge-alternative {
+        background: #17a2b8;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    .badge-not-recommended {
+        background: #dc3545;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    
+    .toc { 
+        background: #f8f9fa; 
+        padding: 12px 20px; 
+        border-radius: 6px; 
+        margin: 20px 0; 
+        font-size: 14px; 
+    }
+    .toc ul { margin: 8px 0; padding-left: 24px; }
+    .toc a { color: #0366d6; text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+    
+    .code-block {
+        background: #f6f8fa;
+        border: 1px solid #dfe2e5;
+        border-radius: 4px;
+        padding: 12px;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 13px;
+        overflow-x: auto;
+        margin: 12px 0;
+    }
+    .highlight-row { background-color: #fff3cd !important; }
+</style>
+</head>
+<body>
+
+<h1>LLM评测工具对比分析</h1>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+    <li><a href="#overview">1. 评测工具概述</a></li>
+    <li><a href="#comparison">2. 详细对比分析</a></li>
+    <li><a href="#frameworks">3. 各框架详细说明</a></li>
+    <li><a href="#recommendation">4. 推荐方案</a></li>
+    <li><a href="#implementation">5. 实施建议</a></li>
+</ul>
+</div>
+
+<hr>
+
+<!-- ==================== 概述 ==================== -->
+<h2 id="overview">1. 评测工具概述</h2>
+
+<div class="info-box">
+<strong>背景：</strong>针对养老陪伴机器人场景的LLM评测需求，需要对"智力"维度的4个评测项（指令遵循、中文特有知识、常识推理、逻辑推理）进行系统评测。本文档对比分析了现有的评测工具和框架，为选择合适的技术方案提供依据。
+</div>
+
+<h3>评测需求分析</h3>
+<table>
+<thead>
+    <tr>
+        <th width="20%">评测维度</th>
+        <th width="30%">评测内容</th>
+        <th width="50%">现有数据集/工具</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td><strong>指令遵循</strong></td>
+        <td>精确理解并执行复杂或模糊指令</td>
+        <td>FollowEval、IFEval</td>
+    </tr>
+    <tr>
+        <td><strong>中文特有知识</strong></td>
+        <td>理解二十四节气、传统节日、民俗习惯等</td>
+        <td>C-Eval、CMMLU</td>
+    </tr>
+    <tr>
+        <td><strong>常识推理</strong></td>
+        <td>日常生活场景的常识判断</td>
+        <td>CHARM（推荐）、CommonSenseQA</td>
+    </tr>
+    <tr>
+        <td><strong>逻辑推理</strong></td>
+        <td>简单因果、条件推理</td>
+        <td>LogiQA、FollowEval</td>
+    </tr>
+</tbody>
+</table>
+
+<h3>评测框架分类</h3>
+<table>
+<thead>
+    <tr>
+        <th width="20%">框架类型</th>
+        <th width="40%">代表工具</th>
+        <th width="40%">特点</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td><strong>综合评测框架</strong></td>
+        <td>OpenCompass、lm-evaluation-harness</td>
+        <td>支持多种数据集，标准化评测流程</td>
+    </tr>
+    <tr>
+        <td><strong>专项评测工具</strong></td>
+        <td>DeepEval、AgentEvals</td>
+        <td>针对特定场景（RAG、Agent）</td>
+    </tr>
+    <tr>
+        <td><strong>自定义开发</strong></td>
+        <td>自建评测代码</td>
+        <td>高度灵活，但开发成本高</td>
+    </tr>
+</tbody>
+</table>
+
+<hr>
+
+<!-- ==================== 详细对比 ==================== -->
+<h2 id="comparison">2. 详细对比分析</h2>
+
+<h3>2.1 核心指标对比</h3>
+<table>
+<thead>
+    <tr>
+        <th width="15%">评测指标</th>
+        <th width="15%">OpenCompass</th>
+        <th width="15%">lm-eval</th>
+        <th width="15%">DeepEval</th>
+        <th width="15%">自定义开发</th>
+        <th width="25%">说明</th>
+    </tr>
+</thead>
+<tbody>
+    <tr class="highlight-row">
+        <td><strong>中文支持</strong></td>
+        <td class="score-5">⭐⭐⭐⭐⭐</td>
+        <td class="score-3">⭐⭐⭐</td>
+        <td class="score-2">⭐⭐</td>
+        <td class="score-5">⭐⭐⭐⭐⭐</td>
+        <td>OpenCompass由中国团队开发，中文支持最好</td>
+    </tr>
+    <tr>
+        <td><strong>本地部署</strong></td>
+        <td class="score-5">⭐⭐⭐⭐⭐</td>
+        <td class="score-5">⭐⭐⭐⭐⭐</td>
+        <td class="score-5">⭐⭐⭐⭐⭐</td>
+        <td class="score-5">⭐⭐⭐⭐⭐</td>
+        <td>所有框架都支持本地部署</td>
+    </tr>
+    <tr class="highlight-row">
+        <td><strong>自定义数据集</strong></td>
+        <td class="score-5">⭐⭐⭐⭐⭐</td>
+        <td class="score-4">⭐⭐⭐⭐</td>
+        <td class="score-4">⭐⭐⭐⭐</td>
+        <td class="score-5">⭐⭐⭐⭐⭐</td>
+        <td>OpenCompass提供最简单的自定义方式</td>
+    </tr>
+    <tr>
+        <td><strong>养老场景适配</strong></td>
+        <td class="score-4">⭐⭐⭐⭐</td>
+        <td class="score-3">⭐⭐⭐</td>
+        <td class="score-3">⭐⭐⭐</td>
+        <td class="score-5">⭐⭐⭐⭐⭐</td>
+        <td>自定义开发最灵活，但成本高</td>
+    </tr>
+    <tr>
+        <td><strong>使用难度</strong></td>
+        <td class="score-4">⭐⭐⭐⭐</td>
+        <td class="score-3">⭐⭐⭐</td>
+        <td class="score-4">⭐⭐⭐⭐</td>
+        <td class="score-1">⭐</td>
+        <td>OpenCompass相对易用</td>
+    </tr>
+    <tr>
+        <td><strong>社区支持</strong></td>
+        <td class="score-4">⭐⭐⭐⭐</td>
+        <td class="score-5">⭐⭐⭐⭐⭐</td>
+        <td class="score-3">⭐⭐⭐</td>
+        <td class="score-1">⭐</td>
+        <td>lm-eval社区最活跃</td>
+    </tr>
+    <tr>
+        <td><strong>文档完善度</strong></td>
+        <td class="score-5">⭐⭐⭐⭐⭐</td>
+        <td class="score-4">⭐⭐⭐⭐</td>
+        <td class="score-3">⭐⭐⭐</td>
+        <td class="score-1">⭐</td>
+        <td>OpenCompass有完善中文文档</td>
+    </tr>
+    <tr>
+        <td><strong>内置数据集</strong></td>
+        <td class="score-5">⭐⭐⭐⭐⭐</td>
+        <td class="score-4">⭐⭐⭐⭐</td>
+        <td class="score-2">⭐⭐</td>
+        <td class="score-1">⭐</td>
+        <td>OpenCompass内置最多中文数据集</td>
+    </tr>
+</tbody>
+</table>
+
+<h3>2.2 功能详细对比</h3>
+<table>
+<thead>
+    <tr>
+        <th width="20%">功能项</th>
+        <th width="20%">OpenCompass</th>
+        <th width="20%">lm-evaluation-harness</th>
+        <th width="20%">DeepEval</th>
+        <th width="20%">自定义开发</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td><strong>数据格式支持</strong></td>
+        <td>CSV、JSON、JSONL、自定义</td>
+        <td>JSON、自定义格式</td>
+        <td>CSV、JSON</td>
+        <td>任意格式</td>
+    </tr>
+    <tr>
+        <td><strong>评测方式</strong></td>
+        <td>规则、AI裁判、人工</td>
+        <td>规则、概率</td>
+        <td>规则、AI裁判</td>
+        <td>自定义</td>
+    </tr>
+    <tr>
+        <td><strong>模型支持</strong></td>
+        <td>本地、API、HuggingFace</td>
+        <td>本地、HuggingFace</td>
+        <td>API、本地</td>
+        <td>自定义</td>
+    </tr>
+    <tr>
+        <td><strong>结果可视化</strong></td>
+        <td>✅ 自动生成报告</td>
+        <td>⚠️ 需自行处理</td>
+        <td>✅ 可视化面板</td>
+        <td>❌ 需自行开发</td>
+    </tr>
+    <tr>
+        <td><strong>团队协作</strong></td>
+        <td>✅ 配置可共享</td>
+        <td>⚠️ 需统一环境</td>
+        <td>✅ 支持CI/CD</td>
+        <td>⚠️ 取决于实现</td>
+    </tr>
+    <tr>
+        <td><strong>安装复杂度</strong></td>
+        <td>⚠️ 中等（需Python 3.10）</td>
+        <td>✅ 简单（pip install）</td>
+        <td>✅ 简单</td>
+        <td>❌ 高</td>
+    </tr>
+    <tr>
+        <td><strong>学习曲线</strong></td>
+        <td>⚠️ 中等</td>
+        <td>⚠️ 中等</td>
+        <td>✅ 较平缓</td>
+        <td>❌ 陡峭</td>
+    </tr>
+</tbody>
+</table>
+
+<h3>2.3 优缺点总结</h3>
+
+<div class="framework-card">
+<h3><span class="badge-recommended">推荐</span> OpenCompass</h3>
+<div class="pros">✅ 优势：</div>
+<ul>
+    <li><strong>中文支持最好</strong>：上海人工智能实验室开发，内置CHARM、C-Eval等中文数据集</li>
+    <li><strong>自定义数据集最简单</strong>：支持快速方式（直接加载CSV）和完整集成方式</li>
+    <li><strong>本地部署友好</strong>：支持HuggingFace模型本地加载，无需联网</li>
+    <li><strong>文档完善</strong>：有详细的中文教程和示例</li>
+    <li><strong>灵活评测方式</strong>：支持规则匹配、AI裁判、人工评测等多种方式</li>
+</ul>
+<div class="cons">❌ 劣势：</div>
+<ul>
+    <li>安装稍复杂（需要Python 3.10+）</li>
+    <li>部分数据集需要从HuggingFace下载（可能需要科学上网）</li>
+    <li>框架相对较重，学习曲线中等</li>
+</ul>
+<div class="neutral">⚠️ 适用场景：</div>
+<p>中文LLM评测、需要自定义数据集、养老场景等垂直领域评测</p>
+</div>
+
+<div class="framework-card">
+<h3><span class="badge-alternative">备选</span> lm-evaluation-harness</h3>
+<div class="pros">✅ 优势：</div>
+<ul>
+    <li><strong>社区最活跃</strong>：EleutherAI维护，社区支持好</li>
+    <li><strong>安装简单</strong>：pip install即可使用</li>
+    <li><strong>支持数据集多</strong>：60+标准学术数据集</li>
+    <li><strong>轻量级</strong>：框架简洁，易于理解</li>
+</ul>
+<div class="cons">❌ 劣势：</div>
+<ul>
+    <li><strong>中文支持较弱</strong>：主要面向英文数据集，中文数据集需要自己找</li>
+    <li><strong>自定义数据集较复杂</strong>：需要写Python类，配置不如OpenCompass直观</li>
+    <li><strong>对养老场景不够友好</strong>：主要针对学术评测，对话式评测支持不如OpenCompass</li>
+    <li><strong>文档主要是英文</strong>：对中文用户不够友好</li>
+</ul>
+<div class="neutral">⚠️ 适用场景：</div>
+<p>英文模型评测、熟悉EleutherAI生态、OpenCompass装不上的备选方案</p>
+</div>
+
+<div class="framework-card">
+<h3><span class="badge-alternative">备选</span> DeepEval</h3>
+<div class="pros">✅ 优势：</div>
+<ul>
+    <li><strong>单元测试风格</strong>：对开发者友好，易于集成到CI/CD</li>
+    <li><strong>支持自定义指标</strong>：灵活定义评测标准</li>
+    <li><strong>可视化面板</strong>：提供评测结果可视化</li>
+</ul>
+<div class="cons">❌ 劣势：</div>
+<ul>
+    <li><strong>中文支持差</strong>：主要面向英文场景，中文文档和数据集少</li>
+    <li><strong>不适合传统NLP评测</strong>：更适合RAG、Agent评测，对传统NLP任务支持不如OpenCompass</li>
+    <li><strong>社区较小</strong>：遇到问题解决可能较慢</li>
+</ul>
+<div class="neutral">⚠️ 适用场景：</div>
+<p>RAG系统评测、Agent评测、需要集成到CI/CD流水线</p>
+</div>
+
+<div class="framework-card">
+<h3><span class="badge-not-recommended">不推荐</span> 自定义开发</h3>
+<div class="pros">✅ 优势：</div>
+<ul>
+    <li><strong>完全可控</strong>：可以实现任何定制化需求</li>
+    <li><strong>无框架依赖</strong>：不依赖第三方框架</li>
+</ul>
+<div class="cons">❌ 劣势：</div>
+<ul>
+    <li><strong>重复造轮子</strong>：数据加载、推理、评测逻辑都要自己写</li>
+    <li><strong>不可复现</strong>：评测逻辑可能写错，结果难以与其他研究对比</li>
+    <li><strong>维护成本高</strong>：每次新增模型/数据集都要改代码</li>
+    <li><strong>开发周期长</strong>：需要大量时间开发和测试</li>
+</ul>
+<div class="neutral">⚠️ 仅适用场景：</div>
+<p>现有框架都满足不了需求、需要高度定制化的评测逻辑、有充足的时间和人力</p>
+</div>
+
+<hr>
+
+<!-- ==================== 各框架详细说明 ==================== -->
+<h2 id="frameworks">3. 各框架详细说明</h2>
+
+<h3>3.1 OpenCompass 使用指南</h3>
+
+<div class="info-box">
+<strong>OpenCompass</strong> 是上海人工智能实验室开发的大模型评测框架，支持60+数据集，特别适合中文LLM评测。
+</div>
+
+<h4>安装步骤</h4>
+<div class="code-block">
+# 1. 克隆仓库
+git clone https://github.com/open-compass/opencompass.git
+cd opencompass
+
+# 2. 创建conda环境（推荐）
+conda create -n opencompass python=3.10
+conda activate opencompass
+
+# 3. 安装依赖
+pip install -e .
+</div>
+
+<h4>快速使用 - 自定义数据集（临时方式）</h4>
+<div class="code-block">
+# 准备数据文件（CSV格式）
+# data.csv 内容：
+# question,answer
+# "北京的天气怎么样？","北京今天晴天，温度20度"
+
+# 运行评测
+python run.py \
+  --models your_model_config \
+  --datasets custom \
+  --dataset-args '{"custom": {"path": "data.csv", "format": "csv"}}'
+</div>
+
+<h4>完整集成 - 自定义数据集（长期方式）</h4>
+<div class="code-block">
+# 1. 创建数据集配置
+# configs/datasets/your_dataset/your_dataset_gen_xx14c8.py
+
+from opencompass.datasets import GenDataset
+
+your_dataset = dict(
+    type=GenDataset,
+    path='data/your_dataset/data.csv',
+    reader_cfg=dict(
+        input_column='question',
+        output_column='answer',
+    ),
+    infer_cfg=dict(
+        prompt_template=dict(
+            type=PromptTemplate,
+            template=dict(
+                begin='<用户>{question}<AI>',
+            ),
+        ),
+        retriever=dict(type=ZeroRetriever),
+        inferencer=dict(type=GenInferencer),
+    ),
+    eval_cfg=dict(
+        evaluator=dict(type=AccEvaluator),
+        pred_role='AI',
+    ),
+)
+
+# 2. 运行评测
+python run.py --datasets your_dataset
+</div>
+
+<h4>养老场景示例</h4>
+<div class="code-block">
+# 数据文件：data/elderly_intelligence/data.csv
+# id,dimension,sub_dimension,question,reference_answer,scoring_criteria
+# 1,智力,指令遵循,"请帮我设置明天早上7点的吃药提醒","好的，已为您设置明天早上7点的吃药提醒",是否正确执行指令
+
+# 运行评测
+python run.py \
+  --models qwen2_7b \
+  --datasets elderly_intelligence \
+  --work-dir outputs/elderly_test
+</div>
+
+<h3>3.2 lm-evaluation-harness 使用指南</h3>
+
+<div class="info-box">
+<strong>lm-evaluation-harness</strong> 是EleutherAI开发的评测框架，社区活跃，支持60+数据集。
+</div>
+
+<h4>安装步骤</h4>
+<div class="code-block">
+# 安装
+pip install lm-eval
+
+# 验证安装
+lm-eval --help
+</div>
+
+<h4>使用示例</h4>
+<div class="code-block">
+# 评测本地模型
+lm-eval --model hf \
+  --model_args pretrained=your_model_path \
+  --tasks hellaswag,winogrande \
+  --device cuda:0 \
+  --output_path results/
+
+# 自定义数据集（需要写Python类）
+# 参考：https://github.com/EleutherAI/lm-evaluation-harness/blob/main/docs/new_task_guide.md
+</div>
+
+<h3>3.3 DeepEval 使用指南</h3>
+
+<div class="info-box">
+<strong>DeepEval</strong> 是LLM评测框架，支持单元测试风格评测，适合CI/CD集成。
+</div>
+
+<h4>安装步骤</h4>
+<div class="code-block">
+# 安装
+pip install deepeval
+
+# 验证安装
+deepeval --help
+</div>
+
+<h4>使用示例</h4>
+<div class="code-block">
+from deepeval import assert_test
+from deepeval.test_case import LLMTestCase
+from deepeval.metrics import AnswerRelevancyMetric
+
+# 定义测试用例
+test_case = LLMTestCase(
+    input="请帮我设置明天早上7点的吃药提醒",
+    actual_output="好的，已为您设置明天早上7点的吃药提醒",
+    expected_output="好的，已为您设置明天早上7点的吃药提醒"
+)
+
+# 定义评测指标
+metric = AnswerRelevancyMetric(threshold=0.7)
+
+# 运行评测
+assert_test(test_case, [metric])
+</div>
+
+<hr>
+
+<!-- ==================== 推荐方案 ==================== -->
+<h2 id="recommendation">4. 推荐方案</h2>
+
+<div class="recommendation">
+<strong>最终推荐：</strong>使用 <strong>OpenCompass</strong> 作为主评测框架，配合少量自定义代码补充养老场景特有维度。
+</div>
+
+<h3>4.1 推荐理由</h3>
+<table>
+<thead>
+    <tr>
+        <th width="20%">评测需求</th>
+        <th width="20%">OpenCompass</th>
+        <th width="20%">lm-eval</th>
+        <th width="20%">DeepEval</th>
+        <th width="20%">自定义开发</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td><strong>中文常识推理</strong></td>
+        <td class="score-5">✅ CHARM内置</td>
+        <td class="score-3">⚠️ 需自己找</td>
+        <td class="score-2">⚠️ 需自己找</td>
+        <td class="score-4">✅ 但费时</td>
+    </tr>
+    <tr>
+        <td><strong>指令遵循</strong></td>
+        <td class="score-5">✅ FollowEval支持</td>
+        <td class="score-4">✅ 支持</td>
+        <td class="score-3">⚠️ 一般</td>
+        <td class="score-4">✅ 但费时</td>
+    </tr>
+    <tr>
+        <td><strong>逻辑推理</strong></td>
+        <td class="score-5">✅ LogiQA内置</td>
+        <td class="score-4">✅ 支持</td>
+        <td class="score-3">⚠️ 一般</td>
+        <td class="score-4">✅ 但费时</td>
+    </tr>
+    <tr>
+        <td><strong>中文特有知识</strong></td>
+        <td class="score-5">✅ C-Eval内置</td>
+        <td class="score-3">⚠️ 需自己找</td>
+        <td class="score-2">⚠️ 需自己找</td>
+        <td class="score-4">✅ 但费时</td>
+    </tr>
+    <tr>
+        <td><strong>养老场景定制</strong></td>
+        <td class="score-5">✅ 自定义简单</td>
+        <td class="score-3">⚠️ 较复杂</td>
+        <td class="score-3">⚠️ 较复杂</td>
+        <td class="score-5">✅ 完全可控</td>
+    </tr>
+</tbody>
+</table>
+
+<h3>4.2 混合方案架构</h3>
+<div class="info-box">
+<strong>推荐架构：</strong>OpenCompass（主流框架） + 少量自写代码（补充）
+</div>
+
+<div class="code-block">
+OpenCompass（主流框架）
+    ↓
+评测基础能力（智力4项）
+    ↓
+CHARM（常识推理）
+FollowEval（指令遵循）
+LogiQA（逻辑推理）
+C-Eval（中文知识）
+    ↓
+自写代码（补充）
+    ↓
+养老场景特有维度
+（情感陪伴、TTS适配等）
+</div>
+
+<h3>4.3 实施步骤</h3>
+<table>
+<thead>
+    <tr>
+        <th width="5%">步骤</th>
+        <th width="20%">任务</th>
+        <th width="40%">具体操作</th>
+        <th width="35%">预期产出</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td><strong>1</strong></td>
+        <td>环境准备</td>
+        <td>安装OpenCompass，配置Python环境</td>
+        <td>可运行的OpenCompass环境</td>
+    </tr>
+    <tr>
+        <td><strong>2</strong></td>
+        <td>基础能力评测</td>
+        <td>用CHARM评测常识推理，用FollowEval评测指令遵循</td>
+        <td>基础能力评测报告</td>
+    </tr>
+    <tr>
+        <td><strong>3</strong></td>
+        <td>自定义数据集</td>
+        <td>整理养老场景数据，用OpenCompass快速方式加载</td>
+        <td>养老场景评测数据集</td>
+    </tr>
+    <tr>
+        <td><strong>4</strong></td>
+        <td>补充评测代码</td>
+        <td>针对OpenCompass覆盖不了的维度，自写评测代码</td>
+        <td>补充评测模块</td>
+    </tr>
+    <tr>
+        <td><strong>5</strong></td>
+        <td>结果分析</td>
+        <td>汇总所有评测结果，生成最终报告</td>
+        <td>完整的LLM评测报告</td>
+    </tr>
+</tbody>
+</table>
+
+<hr>
+
+<!-- ==================== 实施建议 ==================== -->
+<h2 id="implementation">5. 实施建议</h2>
+
+<h3>5.1 阶段规划</h3>
+<table>
+<thead>
+    <tr>
+        <th width="15%">阶段</th>
+        <th width="25%">目标</th>
+        <th width="30%">任务</th>
+        <th width="30%">产出</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td><strong>阶段1：快速验证</strong></td>
+        <td>验证评测框架可行性</td>
+        <td>安装OpenCompass，用现有数据集（CHARM、FollowEval）评测基础能力</td>
+        <td>基础能力评测报告</td>
+    </tr>
+    <tr>
+        <td><strong>阶段2：数据准备</strong></td>
+        <td>构建养老场景评测数据集</td>
+        <td>收集老人真实对话数据，设计场景化测试用例</td>
+        <td>养老场景评测数据集（CSV格式）</td>
+    </tr>
+    <tr>
+        <td><strong>阶段3：集成评测</strong></td>
+        <td>完整评测流程</td>
+        <td>将自定义数据集集成到OpenCompass，运行完整评测</td>
+        <td>完整评测报告</td>
+    </tr>
+    <tr>
+        <td><strong>阶段4：结果分析</strong></td>
+        <td>分析评测结果，优化模型</td>
+        <td>分析各维度表现，找出模型短板，提出优化建议</td>
+        <td>优化建议报告</td>
+    </tr>
+</tbody>
+</table>
+
+<h3>5.2 注意事项</h3>
+<div class="warning">
+<strong>重要提醒：</strong>
+<ul>
+    <li><strong>数据质量</strong>：评测数据的质量直接影响评测结果，需要精心设计测试用例</li>
+    <li><strong>评测指标</strong>：客观指标（如准确率）和主观指标（如情感陪伴质量）需要结合</li>
+    <li><strong>模型对比</strong>：需要在同一数据集上评测多个模型，才能得出客观结论</li>
+    <li><strong>持续优化</strong>：评测不是一次性工作，需要持续进行，跟踪模型优化效果</li>
+</ul>
+</div>
+
+<h3>5.3 资源需求</h3>
+<table>
+<thead>
+    <tr>
+        <th width="20%">资源类型</th>
+        <th width="30%">需求</th>
+        <th width="50%">说明</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td><strong>硬件资源</strong></td>
+        <td>GPU（推荐）、CPU、内存</td>
+        <td>评测大模型需要较高计算资源，GPU可显著加速评测</td>
+    </tr>
+    <tr>
+        <td><strong>数据资源</strong></td>
+        <td>评测数据集、测试用例</td>
+        <td>需要收集或构建养老场景评测数据</td>
+    </tr>
+    <tr>
+        <td><strong>人力资源</strong></td>
+        <td>算法工程师、数据工程师</td>
+        <td>需要熟悉OpenCompass和LLM评测的专业人员</td>
+    </tr>
+    <tr>
+        <td><strong>时间资源</strong></td>
+        <td>2-4周（完整流程）</td>
+        <td>取决于数据准备和评测复杂度</td>
+    </tr>
+</tbody>
+</table>
+
+<hr>
+
+<!-- ==================== 总结 ==================== -->
+<h2>总结</h2>
+
+<div class="recommendation">
+<strong>核心结论：</strong>
+<ol>
+    <li><strong>OpenCompass是最适合养老场景LLM评测的框架</strong>，中文支持好、自定义数据集简单、本地部署友好</li>
+    <li><strong>现有数据集（CHARM、FollowEval等）可以覆盖"智力"维度的4个评测项</strong>，无需从零开始</li>
+    <li><strong>养老场景特有维度需要自定义数据集</strong>，OpenCompass提供最简单的自定义方式</li>
+    <li><strong>推荐混合方案</strong>：OpenCompass（主流框架） + 少量自写代码（补充）</li>
+    <li><strong>评测是一个持续过程</strong>，需要定期运行，跟踪模型优化效果</li>
+</ol>
+</div>
+
+<div class="info-box">
+<strong>下一步行动：</strong>
+<ol>
+    <li>安装OpenCompass，运行示例评测</li>
+    <li>下载CHARM、FollowEval等数据集，评测基础能力</li>
+    <li>设计养老场景评测数据，用OpenCompass快速方式加载</li>
+    <li>分析评测结果，优化模型</li>
+</ol>
+</div>
+
+<hr>
+
+<footer style="text-align: center; color: #6c757d; font-size: 14px; margin-top: 40px;">
+    <p>LLM评测工具对比分析 &copy; 2026 养老陪伴机器人项目</p>
+    <p>生成时间：2026年5月29日</p>
+</footer>
+
+</body>
+</html>

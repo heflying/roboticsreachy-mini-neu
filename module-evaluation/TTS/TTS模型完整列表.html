@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sherpa-onnx TTS 模型完整列表</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: "Microsoft YaHei", sans-serif; background: #f5f7fa; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 12px 12px 0 0; }
+        .header h1 { font-size: 2em; margin-bottom: 10px; }
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; padding: 20px 30px; background: #f8f9fa; }
+        .stat-card { background: white; padding: 15px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .stat-number { font-size: 1.8em; font-weight: bold; color: #667eea; }
+        .stat-label { color: #666; font-size: 0.9em; margin-top: 5px; }
+        .content { padding: 30px; }
+        .section { margin-bottom: 30px; }
+        .section-title { font-size: 1.5em; color: #667eea; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #667eea; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9em; }
+        th { background: #667eea; color: white; padding: 10px; text-align: left; position: sticky; top: 0; }
+        td { padding: 8px 10px; border-bottom: 1px solid #eee; }
+        tr:hover { background: #f8f9fa; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.85em; }
+        .badge-zh { background: #d4edda; color: #155724; }
+        .badge-en { background: #d1ecf1; color: #0c5460; }
+        .badge-mix { background: #fff3cd; color: #856404; }
+        .recommend { background: #d4edda !important; }
+        .footer { text-align: center; padding: 20px; background: #f8f9fa; color: #666; border-radius: 0 0 12px 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎤 sherpa-onnx TTS 模型完整列表</h1>
+            <p>来源: https://github.com/k2-fsa/sherpa-onnx/releases/tag/tts-models</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">649</div>
+                <div class="stat-label">总模型数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">16</div>
+                <div class="stat-label">中文/中英混合</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">13-347 MB</div>
+                <div class="stat-label">模型大小范围</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">量化格式</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <h2 class="section-title">✅ 中文/中英混合模型（适用于养老机器人）</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>模型名称</th>
+                            <th>类型</th>
+                            <th>压缩包大小</th>
+                            <th>更新时间</th>
+                            <th>推荐说明</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="recommend">
+                            <td>1</td>
+                            <td><strong>vits-piper-zh_CN-xiao_ya-medium-int8</strong></td>
+                            <td><span class="badge badge-mix">中英混合</span></td>
+                            <td>13.37 MB</td>
+                            <td>2026-04-27</td>
+                            <td>✅ INT8量化，最小，您用过的模型</td>
+                        </tr>
+                        <tr class="recommend">
+                            <td>2</td>
+                            <td><strong>vits-piper-zh_CN-xiao_ya-medium-fp16</strong></td>
+                            <td><span class="badge badge-mix">中英混合</span></td>
+                            <td>27.80 MB</td>
+                            <td>2026-04-27</td>
+                            <td>✅ FP16量化，平衡选择</td>
+                        </tr>
+                        <tr class="recommend">
+                            <td>3</td>
+                            <td><strong>vits-piper-zh_CN-xiao_ya-medium</strong></td>
+                            <td><span class="badge badge-mix">中英混合</span></td>
+                            <td>57.66 MB</td>
+                            <td>2026-04-27</td>
+                            <td>标准版，质量最好</td>
+                        </tr>
+                        <tr class="recommend">
+                            <td>4</td>
+                            <td><strong>vits-icefall-zh-aishell3</strong></td>
+                            <td><span class="badge badge-zh">纯中文</span></td>
+                            <td>30.10 MB</td>
+                            <td>2024-04-08</td>
+                            <td>✅ 最小中文模型，适合嵌入式</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td><strong>vits-piper-zh_CN-chaowen-medium-int8</strong></td>
+                            <td><span class="badge badge-mix">中英混合</span></td>
+                            <td>13.36 MB</td>
+                            <td>2026-04-27</td>
+                            <td>INT8量化，最新模型</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td><strong>vits-piper-zh_CN-chaowen-medium-fp16</strong></td>
+                            <td><span class="badge badge-mix">中英混合</span></td>
+                            <td>27.80 MB</td>
+                            <td>2026-04-27</td>
+                            <td>FP16量化，最新模型</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td><strong>vits-piper-zh_CN-chaowen-medium</strong></td>
+                            <td><span class="badge badge-mix">中英混合</span></td>
+                            <td>57.64 MB</td>
+                            <td>2026-04-27</td>
+                            <td>标准版，最新模型</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td><strong>vits-melo-tts-zh_en</strong></td>
+                            <td><span class="badge badge-mix">中英混合</span></td>
+                            <td>159.27 MB</td>
+                            <td>2024-11-03</td>
+                            <td>中英混合，适合播报英文</td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td><strong>vits-piper-zh_CN-huayan-medium</strong></td>
+                            <td><span class="badge badge-zh">纯中文</span></td>
+                            <td>64.14 MB</td>
+                            <td>2024-12-24</td>
+                            <td>Piper架构中文模型</td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td><strong>vits-zh-aishell3</strong></td>
+                            <td><span class="badge badge-zh">纯中文</span></td>
+                            <td>140.12 MB</td>
+                            <td>2024-04-08</td>
+                            <td>多说话人，质量更好</td>
+                        </tr>
+                        <tr>
+                            <td>11</td>
+                            <td><strong>vits-zh-hf-fanchen-C</strong></td>
+                            <td><span class="badge badge-zh">纯中文</span></td>
+                            <td>113.80 MB</td>
+                            <td>2024-04-22</td>
+                            <td>187个说话人</td>
+                        </tr>
+                        <tr>
+                            <td>12</td>
+                            <td><strong>vits-zh-hf-theresa</strong></td>
+                            <td><span class="badge badge-zh">纯中文</span></td>
+                            <td>115.01 MB</td>
+                            <td>2024-04-22</td>
+                            <td>804个说话人，可选温和音色</td>
+                        </tr>
+                        <tr>
+                            <td>13</td>
+                            <td><strong>vits-zh-hf-eula</strong></td>
+                            <td><span class="badge badge-zh">纯中文</span></td>
+                            <td>114.98 MB</td>
+                            <td>2024-04-22</td>
+                            <td>804个说话人</td>
+                        </tr>
+                        <tr>
+                            <td>14</td>
+                            <td><strong>kokoro-multi-lang-v1_0</strong></td>
+                            <td><span class="badge badge-mix">多语言</span></td>
+                            <td>333.23 MB</td>
+                            <td>2025-06-18</td>
+                            <td>53个说话人</td>
+                        </tr>
+                        <tr>
+                            <td>15</td>
+                            <td><strong>kokoro-multi-lang-v1_1</strong></td>
+                            <td><span class="badge badge-mix">多语言</span></td>
+                            <td>347.92 MB</td>
+                            <td>2025-06-18</td>
+                            <td>103个说话人，最新版</td>
+                        </tr>
+                        <tr>
+                            <td>16</td>
+                            <td><strong>vits-cantonese-hf-xiaomaiiwn</strong></td>
+                            <td><span class="badge badge-zh">粤语</span></td>
+                            <td>102.99 MB</td>
+                            <td>2024-02-20</td>
+                            <td>粤语模型</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">📊 模型量化格式说明</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>格式后缀</th>
+                            <th>说明</th>
+                            <th>大小对比</th>
+                            <th>质量</th>
+                            <th>RK3588推荐</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>无后缀</strong></td>
+                            <td>标准FP32模型</td>
+                            <td>100%</td>
+                            <td>⭐⭐⭐⭐⭐</td>
+                            <td>❌ 太大</td>
+                        </tr>
+                        <tr style="background: #d4edda;">
+                            <td><strong>-fp16</strong></td>
+                            <td>FP16量化</td>
+                            <td>~50%</td>
+                            <td>⭐⭐⭐⭐</td>
+                            <td>✅ 推荐</td>
+                        </tr>
+                        <tr style="background: #d4edda;">
+                            <td><strong>-int8</strong></td>
+                            <td>INT8量化</td>
+                            <td>~30%</td>
+                            <td>⭐⭐⭐</td>
+                            <td>✅✅ 最推荐</td>
+                        </tr>
+                        <tr>
+                            <td><strong>-x_low</strong></td>
+                            <td>极低质量</td>
+                            <td>~25%</td>
+                            <td>⭐⭐</td>
+                            <td>⚠️ 质量差</td>
+                        </tr>
+                        <tr>
+                            <td><strong>-low</strong></td>
+                            <td>低质量</td>
+                            <td>~50%</td>
+                            <td>⭐⭐⭐</td>
+                            <td>可用</td>
+                        </tr>
+                        <tr>
+                            <td><strong>-medium</strong></td>
+                            <td>中等质量</td>
+                            <td>100%</td>
+                            <td>⭐⭐⭐⭐</td>
+                            <td>标准</td>
+                        </tr>
+                        <tr>
+                            <td><strong>-high</strong></td>
+                            <td>高质量</td>
+                            <td>~170%</td>
+                            <td>⭐⭐⭐⭐⭐</td>
+                            <td>❌ 太大</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">🎯 RK3588 部署推荐排序</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>优先级</th>
+                            <th>模型</th>
+                            <th>大小</th>
+                            <th>量化</th>
+                            <th>原因</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background: #d4edda;">
+                            <td>⭐⭐⭐⭐⭐</td>
+                            <td><strong>vits-piper-zh_CN-xiao_ya-medium-int8</strong></td>
+                            <td>13.37 MB</td>
+                            <td>INT8</td>
+                            <td>您用过的模型，最小，适合RK3588</td>
+                        </tr>
+                        <tr style="background: #d4edda;">
+                            <td>⭐⭐⭐⭐</td>
+                            <td><strong>vits-icefall-zh-aishell3</strong></td>
+                            <td>30.10 MB</td>
+                            <td>FP32</td>
+                            <td>最小的中文模型</td>
+                        </tr>
+                        <tr style="background: #fff3cd;">
+                            <td>⭐⭐⭐</td>
+                            <td><strong>vits-piper-zh_CN-xiao_ya-medium-fp16</strong></td>
+                            <td>27.80 MB</td>
+                            <td>FP16</td>
+                            <td>质量与大小平衡</td>
+                        </tr>
+                        <tr style="background: #fff3cd;">
+                            <td>⭐⭐</td>
+                            <td><strong>vits-melo-tts-zh_en</strong></td>
+                            <td>159.27 MB</td>
+                            <td>FP32</td>
+                            <td>中英混合，适合播报英文单词</td>
+                        </tr>
+                        <tr>
+                            <td>⭐</td>
+                            <td><strong>vits-zh-hf-theresa</strong></td>
+                            <td>115.01 MB</td>
+                            <td>FP32</td>
+                            <td>804个说话人，可选温和音色</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">📋 完整模型列表（649个）</h2>
+                <p style="margin-bottom: 15px; color: #666;">由于模型数量过多（649个），此处仅列出部分示例。完整列表请访问GitHub。</p>
+                <div style="max-height: 400px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>模型名称</th>
+                                <th>语言</th>
+                                <th>大小(MB)</th>
+                                <th>更新时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td>checksum.txt</td><td>其他</td><td>0.06</td><td>2026-05-20</td></tr>
+                            <tr><td>2</td><td>espeak-ng-data.tar.bz2</td><td>其他</td><td>6.92</td><td>2023-11-29</td></tr>
+                            <tr><td>3</td><td>vits-icefall-zh-aishell3.tar.bz2</td><td>中文</td><td>30.10</td><td>2024-04-08</td></tr>
+                            <tr><td>4</td><td>vits-melo-tts-zh_en.tar.bz2</td><td>中英</td><td>159.27</td><td>2024-11-03</td></tr>
+                            <tr><td>5</td><td>vits-piper-zh_CN-xiao_ya-medium.tar.bz2</td><td>中英</td><td>57.66</td><td>2026-04-27</td></tr>
+                            <tr><td>...</td><td colspan="4" style="text-align: center; color: #666;">... 中间省略 644 个模型 ...</td></tr>
+                            <tr><td>649</td><td>vits-zh-hf-zenyatta.tar.bz2</td><td>中文</td><td>115.00</td><td>2024-04-22</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p style="margin-top: 15px; text-align: center;">
+                    <a href="https://github.com/k2-fsa/sherpa-onnx/releases/tag/tts-models" 
+                       style="color: #667eea; text-decoration: none; font-weight: bold;">
+                       👉 点击此处查看 GitHub 完整列表（649个模型）
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>生成时间: 2026-06-04 18:27:56</p>
+            <p>数据来源: <a href="https://github.com/k2-fsa/sherpa-onnx/releases/tag/tts-models">sherpa-onnx GitHub Release</a></p>
+        </div>
+    </div>
+</body>
+</html>

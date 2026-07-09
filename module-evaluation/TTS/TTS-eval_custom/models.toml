@@ -1,0 +1,153 @@
+# TTS 模型配置维护文件
+# 路径均相对于项目根目录
+# 使用方式：在 .env 中设置 TTS_MODEL=<模型名>，程序自动读取对应配置
+
+# ============================================
+# Piper 模型
+# ============================================
+
+[piper-chaowen]
+type = "piper"
+model = "models/TTS/piper-zh_CN-chaowen-medium/zh_CN-chaowen-medium.onnx"
+tokens = "models/TTS/piper-zh_CN-chaowen-medium/tokens.txt"
+lexicon = "models/TTS/piper-zh_CN-chaowen-medium/lexicon.txt"
+rule_fsts = "models/TTS/piper-zh_CN-chaowen-medium/date.fst,models/TTS/piper-zh_CN-chaowen-medium/number.fst,models/TTS/piper-zh_CN-chaowen-medium/phone.fst"
+speaker_id = 0
+speed = 1.0
+sample_rate = 22050
+
+[piper-huayan]
+type = "piper"
+model = "models/TTS/piper-zh_CN-huayan-medium/zh_CN-huayan-medium.onnx"
+tokens = "models/TTS/piper-zh_CN-huayan-medium/tokens.txt"
+speaker_id = 0
+speed = 1.0
+sample_rate = 22050
+
+[piper-xiao_ya]
+type = "piper"
+model = "models/TTS/piper-zh_CN-xiao_ya-medium/zh_CN-xiao_ya-medium.onnx"
+tokens = "models/TTS/piper-zh_CN-xiao_ya-medium/tokens.txt"
+lexicon = "models/TTS/piper-zh_CN-xiao_ya-medium/lexicon.txt"
+rule_fsts = "models/TTS/piper-zh_CN-xiao_ya-medium/date.fst,models/TTS/piper-zh_CN-xiao_ya-medium/number.fst,models/TTS/piper-zh_CN-xiao_ya-medium/phone.fst"
+speaker_id = 0
+speed = 1.0
+sample_rate = 22050
+
+# ============================================
+# VITS 模型
+# ============================================
+
+[vits-icefall-aishell3]
+type = "vits"
+model = "models/TTS/vits-icefall-zh-aishell3/model.onnx"
+lexicon = "models/TTS/vits-icefall-zh-aishell3/lexicon.txt"
+tokens = "models/TTS/vits-icefall-zh-aishell3/tokens.txt"
+rule_fsts = "models/TTS/vits-icefall-zh-aishell3/date.fst,models/TTS/vits-icefall-zh-aishell3/number.fst,models/TTS/vits-icefall-zh-aishell3/phone.fst,models/TTS/vits-icefall-zh-aishell3/new_heteronym.fst"
+speaker_id = 0
+speed = 1.0
+sample_rate = 22050
+
+[vits-aishell3]
+type = "vits"
+model = "models/TTS/vits-zh-aishell3/vits-aishell3.onnx"
+lexicon = "models/TTS/vits-zh-aishell3/lexicon.txt"
+tokens = "models/TTS/vits-zh-aishell3/tokens.txt"
+rule_fsts = "models/TTS/vits-zh-aishell3/date.fst,models/TTS/vits-zh-aishell3/number.fst,models/TTS/vits-zh-aishell3/phone.fst,models/TTS/vits-zh-aishell3/new_heteronym.fst"
+speaker_id = 0
+speed = 1.0
+sample_rate = 22050
+
+[vits-melo-zh-en]
+type = "vits"
+model = "models/TTS/vits-melo-tts-zh_en/model.onnx"
+lexicon = "models/TTS/vits-melo-tts-zh_en/lexicon.txt"
+tokens = "models/TTS/vits-melo-tts-zh_en/tokens.txt"
+rule_fsts = "models/TTS/vits-melo-tts-zh_en/date.fst,models/TTS/vits-melo-tts-zh_en/number.fst,models/TTS/vits-melo-tts-zh_en/phone.fst,models/TTS/vits-melo-tts-zh_en/new_heteronym.fst"
+speaker_id = 0
+speed = 1.0
+sample_rate = 44100
+# 句首缓冲字：Melo 初始解码器隐状态为零向量，前几帧不稳导致首字被截断。
+# 自动在文本前加 "，" 吸收不稳定帧，生成后裁剪掉缓冲部分。
+prepend_buffer = ""
+# 双线程推理：Melo 44100Hz 采样率高，单线程 TTFT 偏高，开双线程利用多核加速
+num_threads = 2
+
+[vits-hf-fanchen-C]
+type = "vits"
+model = "models/TTS/vits-zh-hf-fanchen-C/vits-zh-hf-fanchen-C.onnx"
+lexicon = "models/TTS/vits-zh-hf-fanchen-C/lexicon.txt"
+tokens = "models/TTS/vits-zh-hf-fanchen-C/tokens.txt"
+rule_fsts = "models/TTS/vits-zh-hf-fanchen-C/date.fst,models/TTS/vits-zh-hf-fanchen-C/number.fst,models/TTS/vits-zh-hf-fanchen-C/phone.fst,models/TTS/vits-zh-hf-fanchen-C/new_heteronym.fst"
+speaker_id = 0
+speed = 1.0
+sample_rate = 22050
+
+[vits-hf-theresa]
+type = "vits"
+model = "models/TTS/vits-zh-hf-theresa/theresa.onnx"
+lexicon = "models/TTS/vits-zh-hf-theresa/lexicon.txt"
+tokens = "models/TTS/vits-zh-hf-theresa/tokens.txt"
+rule_fsts = "models/TTS/vits-zh-hf-theresa/date.fst,models/TTS/vits-zh-hf-theresa/number.fst,models/TTS/vits-zh-hf-theresa/phone.fst,models/TTS/vits-zh-hf-theresa/new_heteronym.fst"
+speaker_id = 0
+speed = 1.0
+sample_rate = 22050
+
+[vits-hf-eula]
+type = "vits"
+model = "models/TTS/vits-zh-hf-eula/eula.onnx"
+lexicon = "models/TTS/vits-zh-hf-eula/lexicon.txt"
+tokens = "models/TTS/vits-zh-hf-eula/tokens.txt"
+rule_fsts = "models/TTS/vits-zh-hf-eula/date.fst,models/TTS/vits-zh-hf-eula/number.fst,models/TTS/vits-zh-hf-eula/phone.fst,models/TTS/vits-zh-hf-eula/new_heteronym.fst"
+speaker_id = 0
+speed = 1.0
+sample_rate = 22050
+
+# ============================================
+# Matcha-TTS 模型
+# ============================================
+
+[matcha-icefall-zh-baker]
+type = "matcha"
+acoustic_model = "models/TTS/matcha-icefall-zh-baker/model-steps-3.onnx"
+vocoder = "models/TTS/matcha-icefall-zh-baker/vocos-22khz-univ.onnx"
+lexicon = "models/TTS/matcha-icefall-zh-baker/lexicon.txt"
+tokens = "models/TTS/matcha-icefall-zh-baker/tokens.txt"
+rule_fsts = "models/TTS/matcha-icefall-zh-baker/date.fst,models/TTS/matcha-icefall-zh-baker/number.fst,models/TTS/matcha-icefall-zh-baker/phone.fst"
+speaker_id = 0
+speed = 1.0
+# vocos-22khz-univ 输出采样率 22050 Hz
+sample_rate = 22050
+# 句首缓冲字：吸收 decoder 初始化不稳定帧
+prepend_buffer = "，"
+# 双线程推理：加速生成
+num_threads = 2
+
+# ============================================
+# Kokoro 模型
+# ============================================
+
+[kokoro-v1_0]
+type = "kokoro"
+model = "models/TTS/kokoro-multi-lang-v1_0/model.onnx"
+voices = "models/TTS/kokoro-multi-lang-v1_0/voices.bin"
+tokens = "models/TTS/kokoro-multi-lang-v1_0/tokens.txt"
+data_dir = "models/TTS/kokoro-multi-lang-v1_0/espeak-ng-data"
+lexicon = "models/TTS/kokoro-multi-lang-v1_0/lexicon-us-en.txt,models/TTS/kokoro-multi-lang-v1_0/lexicon-zh.txt"
+rule_fsts = "models/TTS/kokoro-multi-lang-v1_0/date-zh.fst,models/TTS/kokoro-multi-lang-v1_0/number-zh.fst,models/TTS/kokoro-multi-lang-v1_0/phone-zh.fst"
+speaker_id = 47  # zf_xiaoxiao 中文女声
+speed = 1.0
+sample_rate = 22050
+
+[kokoro-v1_1]
+type = "kokoro"
+model = "models/TTS/kokoro-multi-lang-v1_1/model.onnx"
+voices = "models/TTS/kokoro-multi-lang-v1_1/voices.bin"
+tokens = "models/TTS/kokoro-multi-lang-v1_1/tokens.txt"
+data_dir = "models/TTS/kokoro-multi-lang-v1_1/espeak-ng-data"
+lexicon = "models/TTS/kokoro-multi-lang-v1_1/lexicon-us-en.txt,models/TTS/kokoro-multi-lang-v1_1/lexicon-zh.txt"
+rule_fsts = "models/TTS/kokoro-multi-lang-v1_1/date-zh.fst,models/TTS/kokoro-multi-lang-v1_1/number-zh.fst,models/TTS/kokoro-multi-lang-v1_1/phone-zh.fst"
+speaker_id = 47
+speed = 1.0
+sample_rate = 22050
+

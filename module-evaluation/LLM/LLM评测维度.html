@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>LLM评测维度总结 — 表1至表5完整版</title>
+<style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+        line-height: 1.6;
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 20px;
+        color: #24292e;
+        background-color: #fff;
+    }
+    h1 { border-bottom: 2px solid #eaecef; padding-bottom: .3em; }
+    h2 { border-bottom: 1px solid #eaecef; padding-bottom: .3em; margin-top: 36px; }
+    h3 { margin-top: 28px; }
+    hr { border: none; border-top: 2px dashed #eaecef; margin: 40px 0; }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 16px 0;
+        font-size: 13px;
+    }
+    table th, table td {
+        border: 1px solid #dfe2e5;
+        padding: 7px 10px;
+        text-align: left;
+        vertical-align: top;
+    }
+    table th { background-color: #f6f8fa; font-weight: 600; }
+    table tr:nth-child(even) { background-color: #f9f9f9; }
+    .cat-header td {
+        background-color: #e8ecf1;
+        font-weight: 700;
+        font-size: 13.5px;
+    }
+    .subcat-header td {
+        background-color: #f0f4f8;
+        font-weight: 600;
+        font-size: 13px;
+        color: #586069;
+        border-left: 3px solid #79b8ff;
+    }
+    .tag-old {
+        background: #d4edda;
+        color: #155724;
+        padding: 1px 6px;
+        border-radius: 3px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    .tag-new {
+        background: #cce5ff;
+        color: #004085;
+        padding: 1px 6px;
+        border-radius: 3px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    .cover-yes { color: #28a745; font-weight: bold; }
+    .cover-partial { color: #e36209; font-weight: bold; }
+    .cover-no { color: #cb2431; font-weight: bold; }
+    .note-box {
+        background: #fff8e1;
+        border-left: 4px solid #ffc107;
+        padding: 10px 16px;
+        margin: 16px 0;
+        font-size: 13px;
+    }
+    .toc { background: #f8f9fa; padding: 12px 20px; border-radius: 6px; margin: 20px 0; font-size: 14px; }
+    .toc ul { margin: 8px 0; padding-left: 24px; }
+    .toc a { color: #0366d6; }
+</style>
+</head>
+<body>
+
+<h1>LLM评测维度总结 — 表1至表5完整版</h1>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+    <li><a href="#t1">表格1：LLM所有评测维度总览（53维度，18大类）</a></li>
+    <li><a href="#t2">表格2：养老场景聊天助手LLM相关评测维度（筛选24维度）</a></li>
+    <li><a href="#t3">表格3：LLM评判标准.md 总结（原有33条目）</a></li>
+    <li><a href="#t4">表格4：更新后的最终测试维度（基于表格3，标注新增）</a></li>
+    <li><a href="#t5">表格5：表格2 × 表格4 对照验证</a></li>
+</ul>
+</div>
+
+<hr>
+
+<!-- ==================== 表格1 ==================== -->
+<h2 id="t1">表格1：LLM所有评测维度总览</h2>
+
+<table>
+<thead>
+<tr>
+    <th>序号</th>
+    <th>维度大类</th>
+    <th>具体维度</th>
+    <th>说明</th>
+    <th>典型评测基准/来源</th>
+</tr>
+</thead>
+<tbody>
+<tr class="cat-header"><td colspan="5">一、综合知识与学科能力</td></tr>
+<tr><td>1</td><td>综合知识</td><td>世界知识/常识</td><td>广泛的事实性知识掌握程度</td><td>MMLU、MMLU-Pro、C-Eval</td></tr>
+<tr><td>2</td><td></td><td>学科专业知识</td><td>学术学科（数学、物理、历史等）的深度知识</td><td>MMLU（57学科）、C-Eval（52学科）</td></tr>
+<tr><td>3</td><td></td><td>中文特有知识</td><td>中国文化、历史、社会、国情知识</td><td>CMMLU、C-Eval</td></tr>
+<tr><td>4</td><td></td><td>专业领域知识</td><td>医学、法律、金融等垂直领域知识</td><td>MedQA、LegalBench、FinanceBench</td></tr>
+
+<tr class="cat-header"><td colspan="5">二、语言理解</td></tr>
+<tr><td>5</td><td>语言理解</td><td>阅读理解</td><td>文本理解与信息提取能力</td><td>RACE、CLUE、SuperGLUE</td></tr>
+<tr><td>6</td><td></td><td>语义理解</td><td>语义解析、修辞手法理解</td><td>SuperCLUE-语言理解、CLUE</td></tr>
+<tr><td>7</td><td></td><td>文本分类/信息抽取</td><td>命名实体识别、关系抽取、分类</td><td>CLUE、BIG-Bench</td></tr>
+<tr><td>8</td><td></td><td>语法与纠错</td><td>语法识别与修改、字词理解</td><td>OpenCompass-语言能力</td></tr>
+
+<tr class="cat-header"><td colspan="5">三、推理与逻辑</td></tr>
+<tr><td>9</td><td>推理与逻辑</td><td>逻辑推理</td><td>演绎、归纳、类比推理</td><td>SuperCLUE-逻辑推理、AGIEval</td></tr>
+<tr><td>10</td><td></td><td>因果推理</td><td>因果关系的推断与判断</td><td>BIG-Bench Hard、GPQA-Diamond</td></tr>
+<tr><td>11</td><td></td><td>常识推理</td><td>日常生活场景推理判断</td><td>HellaSwag、ARC-Challenge</td></tr>
+<tr><td>12</td><td></td><td>科学推理</td><td>物理、化学、生物等学科推理</td><td>GPQA-Diamond、ARC-AGI-2</td></tr>
+<tr><td>13</td><td></td><td>多步推理</td><td>需要多步骤的复杂推理</td><td>BIG-Bench Hard、Humanity's Last Exam</td></tr>
+
+<tr class="cat-header"><td colspan="5">四、数学能力</td></tr>
+<tr><td>14</td><td>数学能力</td><td>基础算术</td><td>小学到初中数学问题</td><td>GSM8K</td></tr>
+<tr><td>15</td><td></td><td>高等数学</td><td>竞赛级及大学数学题</td><td>MATH-500、AIME</td></tr>
+<tr><td>16</td><td></td><td>多语言数学推理</td><td>跨语言数学一致性</td><td>MGSM</td></tr>
+
+<tr class="cat-header"><td colspan="5">五、代码与技术能力</td></tr>
+<tr><td>17</td><td>代码与技术</td><td>代码生成</td><td>函数级代码补全与生成</td><td>HumanEval、MBPP</td></tr>
+<tr><td>18</td><td></td><td>软件工程</td><td>真实项目级代码修复</td><td>SWE-bench Verified</td></tr>
+<tr><td>19</td><td></td><td>防污染编码</td><td>基于新题目的动态编码测试</td><td>LiveCodeBench</td></tr>
+
+<tr class="cat-header"><td colspan="5">六、语言生成与创作</td></tr>
+<tr><td>20</td><td>生成与创作</td><td>文本生成</td><td>连贯、流畅的文本生成</td><td>SuperCLUE-文本专项</td></tr>
+<tr><td>21</td><td></td><td>摘要生成</td><td>长文本摘要能力</td><td>CNN/DailyMail、XSum</td></tr>
+<tr><td>22</td><td></td><td>翻译</td><td>跨语言翻译能力</td><td>WMT、Flores</td></tr>
+<tr><td>23</td><td></td><td>创意写作</td><td>小说、诗歌、剧本等创作</td><td>COIG-P</td></tr>
+
+<tr class="cat-header"><td colspan="5">七、对话与交互</td></tr>
+<tr><td>24</td><td>对话与交互</td><td>多轮对话</td><td>多轮交互中保持连贯</td><td>MT-Bench、Chatbot Arena、C3</td></tr>
+<tr><td>25</td><td></td><td>指令遵循</td><td>精确理解并执行复杂指令</td><td>IFEval、TencentLLMEval</td></tr>
+<tr><td>26</td><td></td><td>上下文理解</td><td>对对话历史的持续跟踪与理解</td><td>MT-Bench、C3</td></tr>
+
+<tr class="cat-header"><td colspan="5">八、安全与伦理</td></tr>
+<tr><td>27</td><td>安全与伦理</td><td>内容安全</td><td>拒绝暴力、色情、仇恨等有害内容</td><td>Toxigen、RealToxicityPrompts</td></tr>
+<tr><td>28</td><td></td><td>隐私保护</td><td>不泄露、不推断个人隐私信息</td><td>OpenEval、CORE</td></tr>
+<tr><td>29</td><td></td><td>价值观对齐</td><td>输出符合所在文化圈的价值观</td><td>OpenEval、CORE</td></tr>
+<tr><td>30</td><td></td><td>越狱抵抗</td><td>抵御对抗性prompt攻击</td><td>AdvBench、HELM-toxicity</td></tr>
+
+<tr class="cat-header"><td colspan="5">九、公平性与偏见</td></tr>
+<tr><td>31</td><td>公平性与偏见</td><td>人口统计偏见</td><td>不同性别、种族、年龄群体表现一致性</td><td>BBQ、WinoBias、HELM-bias</td></tr>
+<tr><td>32</td><td></td><td>文化偏见</td><td>对不同文化/地域的无偏见表达</td><td>HELM-fairness</td></tr>
+
+<tr class="cat-header"><td colspan="5">十、事实性与幻觉</td></tr>
+<tr><td>33</td><td>事实性与幻觉</td><td>事实一致性</td><td>输出与事实是否相符</td><td>TruthfulQA、FACTS Grounding</td></tr>
+<tr><td>34</td><td></td><td>幻觉率</td><td>编造、虚构信息的比例</td><td>HaluEval、FactScore</td></tr>
+<tr><td>35</td><td></td><td>校准与置信度</td><td>模型信心分数是否真实反映正确概率</td><td>HELM-calibration</td></tr>
+
+<tr class="cat-header"><td colspan="5">十一、鲁棒性与泛化</td></tr>
+<tr><td>36</td><td>鲁棒性与泛化</td><td>对抗鲁棒性</td><td>对抗样本下的输出稳定性</td><td>AdvGLUE、ANLI</td></tr>
+<tr><td>37</td><td></td><td>分布外泛化</td><td>训练分布外数据的表现</td><td>HELM-robustness</td></tr>
+<tr><td>38</td><td></td><td>输入扰动鲁棒性</td><td>拼写错误、噪声输入下的稳定性</td><td>-</td></tr>
+
+<tr class="cat-header"><td colspan="5">十二、多语言能力</td></tr>
+<tr><td>39</td><td>多语言能力</td><td>跨语言理解</td><td>多语种理解与生成质量</td><td>MGSM、Flores</td></tr>
+<tr><td>40</td><td></td><td>多语言一致性</td><td>不同语言间推理一致性</td><td>HELM-multilingual、LiveBench</td></tr>
+
+<tr class="cat-header"><td colspan="5">十三、多模态能力</td></tr>
+<tr><td>41</td><td>多模态能力</td><td>图文理解</td><td>图像+文本的联合理解</td><td>MMMU、MMBench</td></tr>
+<tr><td>42</td><td></td><td>视觉推理</td><td>图表、科学图示的推理</td><td>MathVista、ChartQA</td></tr>
+
+<tr class="cat-header"><td colspan="5">十四、智能体与工具使用</td></tr>
+<tr><td>43</td><td>智能体与工具</td><td>工具调用</td><td>调用外部API/工具</td><td>CToolEval、AgentBench</td></tr>
+<tr><td>44</td><td></td><td>Agent任务规划</td><td>自主规划并完成多步任务</td><td>WebArena、OSWorld、GAIA</td></tr>
+
+<tr class="cat-header"><td colspan="5">十五、长上下文能力</td></tr>
+<tr><td>45</td><td>长上下文</td><td>长文档理解</td><td>超长文本的信息提取和推理</td><td>L-Eval、LongBench</td></tr>
+<tr><td>46</td><td></td><td>长程依赖</td><td>远距离上下文信息的捕捉</td><td>Needle-in-a-Haystack</td></tr>
+
+<tr class="cat-header"><td colspan="5">十六、效率与性能</td></tr>
+<tr><td>47</td><td>效率与性能</td><td>推理速度/延迟</td><td>首词延迟(TTFT)、生成速度</td><td>HELM-efficiency</td></tr>
+<tr><td>48</td><td></td><td>计算资源消耗</td><td>显存占用、吞吐量、成本</td><td>-</td></tr>
+
+<tr class="cat-header"><td colspan="5">十七、人类偏好对齐</td></tr>
+<tr><td>49</td><td>对齐与偏好</td><td>有帮助性</td><td>回复是否有实际帮助</td><td>HELM、AlignBench</td></tr>
+<tr><td>50</td><td></td><td>诚实性</td><td>不编造、不掩盖不确定性</td><td>TruthfulQA</td></tr>
+<tr><td>51</td><td></td><td>无害性</td><td>避免造成心理或物理伤害</td><td>HELM-harmlessness</td></tr>
+
+<tr class="cat-header"><td colspan="5">十八、创新与创意</td></tr>
+<tr><td>52</td><td>创新与创意</td><td>创新思维</td><td>跨领域类比、新颖想法生成</td><td>SuperCLUE-创新能力</td></tr>
+<tr><td>53</td><td></td><td>场景概念设计</td><td>开放式的创意场景设计</td><td>-</td></tr>
+</tbody>
+</table>
+
+<h3>表1来源说明</h3>
+<table>
+<thead><tr><th>来源</th><th>贡献维度</th></tr></thead>
+<tbody>
+<tr><td>HELM (Stanford)</td><td>综合评测框架，首创超越准确性的多指标：安全性、公平性、效率、鲁棒性、事实性、校准</td></tr>
+<tr><td>OpenCompass (上海AI Lab)</td><td>6大通用能力（学科、知识、推理、理解、语言、安全）+ 4大特色（长文本、代码、工具、知识增强）</td></tr>
+<tr><td>SuperCLUE</td><td>中文场景权威基准：数学推理、科学推理、代码生成、Agent、指令遵循、幻觉控制</td></tr>
+<tr><td>Galileo 7大类别</td><td>通用语言理解、知识事实性、推理求解、编程技术、伦理安全、多模态、行业专用</td></tr>
+<tr><td>LXT 2026 报告</td><td>14类评估维度：强调幻觉/事实性/毒性/偏见/校准，特别指出RAG评估与locale级多语言盲区</td></tr>
+<tr><td>博客园评测体系 (2025)</td><td>12维度中文评测全景图：涵盖语言、推理、安全、鲁棒、公平、多语言、效率、多模态等</td></tr>
+<tr><td>SegmentFault 2026指南</td><td>5大核心能力 + 3大方法论（静态基准/人类偏好/垂直场景）</td></tr>
+</tbody>
+</table>
+
+<hr>
+
+<!-- ==================== 表格2 ==================== -->
+<h2 id="t2">表格2：养老场景聊天助手LLM相关评测维度（从表格1筛选，共24个维度）</h2>
+
+<table>
+<thead>
+<tr>
+    <th>序号</th>
+    <th>大类</th>
+    <th>具体维度</th>
+    <th>养老场景重要性</th>
+    <th>筛选原因</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>对话与交互</td><td>多轮对话</td><td>⭐⭐⭐⭐⭐</td><td>核心：老人需要多轮自然聊天</td></tr>
+<tr><td>2</td><td></td><td>指令遵循</td><td>⭐⭐⭐⭐⭐</td><td>核心：准确执行老人指令</td></tr>
+<tr><td>3</td><td></td><td>上下文理解</td><td>⭐⭐⭐⭐⭐</td><td>核心：记住对话历史，不前后矛盾</td></tr>
+<tr><td>4</td><td>综合知识</td><td>世界知识/常识</td><td>⭐⭐⭐⭐⭐</td><td>核心：健康、养生、生活常识问答</td></tr>
+<tr><td>5</td><td></td><td>专业领域知识（健康方向）</td><td>⭐⭐⭐⭐⭐</td><td>核心：老人高频关注的健康医疗知识</td></tr>
+<tr><td>6</td><td></td><td>中文特有知识</td><td>⭐⭐⭐⭐</td><td>重要：理解中国文化、节气、习俗</td></tr>
+<tr><td>7</td><td>安全与伦理</td><td>内容安全</td><td>⭐⭐⭐⭐⭐</td><td>必须：避免有害、危险、诱导性内容</td></tr>
+<tr><td>8</td><td></td><td>隐私保护</td><td>⭐⭐⭐⭐⭐</td><td>必须：不泄露老人身体、住址等隐私</td></tr>
+<tr><td>9</td><td></td><td>价值观对齐</td><td>⭐⭐⭐⭐⭐</td><td>必须：尊重老人、温和耐心</td></tr>
+<tr><td>10</td><td></td><td>越狱抵抗</td><td>⭐⭐⭐⭐</td><td>重要：防止被诱导输出不安全内容</td></tr>
+<tr><td>11</td><td>公平性与偏见</td><td>人口统计偏见（年龄歧视）</td><td>⭐⭐⭐⭐</td><td>重要：不对老人有年龄歧视或刻板印象</td></tr>
+<tr><td>12</td><td></td><td>文化偏见</td><td>⭐⭐⭐⭐</td><td>重要：尊重中国传统文化习俗</td></tr>
+<tr><td>13</td><td>事实性与幻觉</td><td>事实一致性</td><td>⭐⭐⭐⭐⭐</td><td>核心：不说假话、不传播错误信息</td></tr>
+<tr><td>14</td><td></td><td>幻觉率</td><td>⭐⭐⭐⭐⭐</td><td>核心：尤其不能编造健康/医疗信息</td></tr>
+<tr><td>15</td><td>对齐与偏好</td><td>有帮助性</td><td>⭐⭐⭐⭐⭐</td><td>核心：回复真正解决老人问题</td></tr>
+<tr><td>16</td><td></td><td>诚实性</td><td>⭐⭐⭐⭐⭐</td><td>核心：不知道就说不知道，不编造</td></tr>
+<tr><td>17</td><td></td><td>无害性</td><td>⭐⭐⭐⭐⭐</td><td>核心：避免对老人造成心理或身体伤害</td></tr>
+<tr><td>18</td><td>语言理解</td><td>语义理解</td><td>⭐⭐⭐⭐⭐</td><td>核心：理解老人口语化、非标准表达</td></tr>
+<tr><td>19</td><td>生成与创作</td><td>文本生成</td><td>⭐⭐⭐⭐⭐</td><td>核心：生成适合TTS播报的自然回复</td></tr>
+<tr><td>20</td><td>鲁棒性与泛化</td><td>输入扰动鲁棒性</td><td>⭐⭐⭐⭐⭐</td><td>核心：老人发音不清、ASR错字时仍能正确理解</td></tr>
+<tr><td>21</td><td>推理与逻辑</td><td>逻辑推理</td><td>⭐⭐⭐</td><td>可选：日常对话中的简单逻辑推理</td></tr>
+<tr><td>22</td><td></td><td>常识推理</td><td>⭐⭐⭐⭐</td><td>重要：日常生活场景的常识判断</td></tr>
+<tr><td>23</td><td>智能体与工具</td><td>工具调用</td><td>⭐⭐⭐⭐</td><td>重要：查天气、设提醒、控制设备</td></tr>
+<tr><td>24</td><td>效率与性能</td><td>推理速度/延迟</td><td>⭐⭐⭐⭐</td><td>重要：语音实时交互不能有明显延迟</td></tr>
+</tbody>
+</table>
+
+<h3>排除说明</h3>
+<table>
+<thead><tr><th>被排除的大类</th><th>排除维度举例</th><th>排除原因</th></tr></thead>
+<tbody>
+<tr><td>数学能力（全部3个）</td><td>基础算术、高等数学、多语言数学</td><td>养老聊天不需数学</td></tr>
+<tr><td>代码与技术（全部3个）</td><td>代码生成、软件工程、防污染编码</td><td>与场景完全无关</td></tr>
+<tr><td>多语言能力（全部2个）</td><td>跨语言理解、多语言一致性</td><td>纯中文场景</td></tr>
+<tr><td>多模态能力（全部2个）</td><td>图文理解、视觉推理</td><td>无明确需求</td></tr>
+<tr><td>长上下文能力（全部2个）</td><td>长文档理解、长程依赖</td><td>日常聊天不涉及</td></tr>
+<tr><td>创新与创意（全部2个）</td><td>创新思维、场景概念设计</td><td>非核心场景</td></tr>
+<tr><td>推理与逻辑（部分3个）</td><td>因果推理、科学推理、多步推理</td><td>对话不需要复杂推理</td></tr>
+<tr><td>生成与创作（部分3个）</td><td>摘要生成、翻译、创意写作</td><td>日常聊天不需要</td></tr>
+<tr><td>语言理解（部分3个）</td><td>阅读理解、文本分类、语法纠错</td><td>非聊天场景核心</td></tr>
+<tr><td>鲁棒性（部分2个）</td><td>对抗鲁棒性、分布外泛化</td><td>超出聊天助手场景</td></tr>
+<tr><td>事实性（部分1个）</td><td>校准与置信度</td><td>聊天场景不需要</td></tr>
+<tr><td>智能体（部分1个）</td><td>Agent任务规划</td><td>日常聊天不需复杂Agent</td></tr>
+<tr><td>效率（部分1个）</td><td>计算资源消耗</td><td>部署侧指标</td></tr>
+<tr><td>综合知识（部分1个）</td><td>学科专业知识（全学科）</td><td>仅保留健康方向</td></tr>
+</tbody>
+</table>
+
+<div class="note-box">
+<strong>统计</strong>：表格1共53个维度 → 筛选得24个 → 排除29个，筛选率45%
+</div>
+
+<hr>
+
+<!-- ==================== 表格3 ==================== -->
+<h2 id="t3">表格3：LLM评判标准.md 总结（原有内容）</h2>
+
+<h3>一、速度指标</h3>
+<table>
+<thead><tr><th>序号</th><th>测试维度</th><th>子维度/关注点</th><th>定义/说明</th><th>对应原文章节</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>首词延迟(TTFT)</td><td>—</td><td>从ASR文本输入完成，到LLM输出第一个token的时间</td><td>2.1</td></tr>
+<tr><td>2</td><td>生成速度(Tokens/sec)</td><td>—</td><td>LLM每秒生成token的速度，低于TTS消耗速度会导致卡顿</td><td>2.2</td></tr>
+</tbody>
+</table>
+
+<h3>二、效果指标</h3>
+<table>
+<thead><tr><th>序号</th><th>测试维度</th><th>子维度/关注点</th><th>定义/说明</th><th>对应原文章节</th></tr></thead>
+<tbody>
+<tr><td>3</td><td>回复幻觉率</td><td>事实正确性</td><td>模型在聊天中编造事实、错答常识、虚构信息的比例</td><td>3.1</td></tr>
+<tr><td>4</td><td>多轮连贯性</td><td>上下文回忆正确率</td><td>3~10轮对话中保持上下文一致、记住先前信息</td><td>3.2</td></tr>
+<tr><td>5</td><td></td><td>主题连续性</td><td>对话主题不偏离</td><td>3.2</td></tr>
+<tr><td>6</td><td></td><td>人设稳定性</td><td>模型人设、语气保持一致</td><td>3.2</td></tr>
+<tr><td>7</td><td>口语化程度</td><td>适合TTS播报</td><td>生成文本是否适合直接交给TTS播报</td><td>3.3</td></tr>
+<tr><td>8</td><td></td><td>无书面化长句</td><td>避免难以口播的复杂从句</td><td>3.3</td></tr>
+<tr><td>9</td><td></td><td>简洁自然</td><td>生成内容简洁自然</td><td>3.3</td></tr>
+<tr><td>10</td><td>工具调用能力</td><td>工具选择正确率</td><td>正确判断是否调用、调用哪个工具</td><td>3.4</td></tr>
+<tr><td>11</td><td></td><td>参数填写正确率</td><td>工具调用参数提取正确</td><td>3.4</td></tr>
+<tr><td>12</td><td></td><td>不乱调用</td><td>不需要调用时是否乱调用</td><td>3.4</td></tr>
+<tr><td>13</td><td></td><td>调用结果整合正确率</td><td>调用结果整合为自然回复</td><td>3.4</td></tr>
+<tr><td>14</td><td>记忆总结能力</td><td>关键信息提取完整率</td><td>多轮对话中关键信息稳定提取</td><td>3.5</td></tr>
+<tr><td>15</td><td></td><td>摘要压缩不丢失核心信息</td><td>摘要压缩后不丢失核心信息</td><td>3.5</td></tr>
+<tr><td>16</td><td></td><td>信息记录正确</td><td>人物信息、偏好、禁忌、待办事项记录正确</td><td>3.5</td></tr>
+<tr><td>17</td><td></td><td>摘要便于后续使用</td><td>长对话后摘要仍便于后续轮次使用</td><td>3.5</td></tr>
+<tr><td>18</td><td>ASR错字输入鲁棒性</td><td>意图恢复正确率</td><td>ASR错字情况下仍能正确理解用户真实意图</td><td>3.6</td></tr>
+<tr><td>19</td><td></td><td>关键信息容错率</td><td>关键信息容错能力</td><td>3.6</td></tr>
+<tr><td>20</td><td></td><td>不过度误解</td><td>对轻微错字是否过度误解</td><td>3.6</td></tr>
+<tr><td>21</td><td></td><td>主动澄清</td><td>遇到歧义输入时是否会主动澄清</td><td>3.6</td></tr>
+<tr><td>22</td><td>安全与陪伴适配性</td><td>情绪低落场景</td><td>用户情绪低落时的回复适配性</td><td>3.7</td></tr>
+<tr><td>23</td><td></td><td>误解用户场景</td><td>误解用户时的回复适配性</td><td>3.7</td></tr>
+<tr><td>24</td><td></td><td>医疗/紧急事件模糊表达</td><td>医疗/紧急事件模糊表达的处理</td><td>3.7</td></tr>
+<tr><td>25</td><td></td><td>记忆混乱或重复提问场景</td><td>记忆混乱或重复提问时的回复适配性</td><td>3.7</td></tr>
+</tbody>
+</table>
+
+<h3>统计</h3>
+<table>
+<thead><tr><th>分类</th><th>数量</th></tr></thead>
+<tbody>
+<tr><td>速度指标维度</td><td>2个</td></tr>
+<tr><td>效果指标维度</td><td>7个（含23个子维度）</td></tr>
+<tr><td>合计</td><td>25行条目</td></tr>
+</tbody>
+</table>
+
+<hr>
+
+<!-- ==================== 表格4 ==================== -->
+<h2 id="t4">表格4：更新后的最终测试维度（基于表格3，标注新增内容）</h2>
+
+<table>
+<thead>
+<tr>
+    <th>序号</th>
+    <th>测试维度</th>
+    <th>子维度/关注点</th>
+    <th>定义/说明</th>
+    <th>状态</th>
+    <th>来源/对应原文章节</th>
+</tr>
+</thead>
+<tbody>
+
+<tr class="cat-header"><td colspan="6">一、速度指标</td></tr>
+<tr>
+    <td>1</td><td>首词延迟(TTFT)</td><td>—</td>
+    <td>从ASR文本输入完成，到LLM输出第一个token的时间</td>
+    <td><span class="tag-old">原有</span></td><td>表格3-2.1</td>
+</tr>
+<tr>
+    <td>2</td><td>生成速度(Tokens/sec)</td><td>—</td>
+    <td>LLM每秒生成token的速度，低于TTS消耗速度会导致卡顿</td>
+    <td><span class="tag-old">原有</span></td><td>表格3-2.2</td>
+</tr>
+
+<tr class="cat-header"><td colspan="6">二、效果指标</td></tr>
+
+<tr><td>3</td><td>智力</td><td>指令遵循</td><td>精确理解并执行老人发出的复杂或模糊指令，含多步指令</td><td><span class="tag-new">新加入</span></td><td>表格2-2（对话与交互）</td></tr>
+<tr><td></td><td></td><td>中文特有知识</td><td>理解二十四节气、传统节日、民俗习惯等，融入聊天</td><td><span class="tag-new">新加入</span></td><td>表格2-6（综合知识）</td></tr>
+<tr><td></td><td></td><td>常识推理</td><td>对老人日常生活场景的常识判断（如天气穿衣建议）</td><td><span class="tag-new">新加入</span></td><td>表格2-22（推理与逻辑）</td></tr>
+<tr><td></td><td></td><td>逻辑推理</td><td>日常聊天中的简单因果、条件推理</td><td><span class="tag-new">新加入</span></td><td>表格2-21（推理与逻辑）</td></tr>
+
+<tr><td>4</td><td>回复幻觉率</td><td>事实正确性</td><td>模型在聊天中编造事实、错答常识、虚构信息的比例</td><td><span class="tag-old">原有</span></td><td>表格3-3.1</td></tr>
+<tr><td>5</td><td>多轮连贯性</td><td>上下文回忆正确率</td><td>3~10轮对话中保持上下文一致、记住先前信息</td><td><span class="tag-old">原有</span></td><td>表格3-3.2</td></tr>
+<tr><td></td><td></td><td>主题连续性</td><td>对话主题不偏离</td><td><span class="tag-old">原有</span></td><td>表格3-3.2</td></tr>
+<tr><td></td><td></td><td>人设稳定性</td><td>模型人设、语气保持一致</td><td><span class="tag-old">原有</span></td><td>表格3-3.2</td></tr>
+<tr><td>6</td><td>口语化程度</td><td>适合TTS播报</td><td>生成文本是否适合直接交给TTS播报</td><td><span class="tag-old">原有</span></td><td>表格3-3.3</td></tr>
+<tr><td></td><td></td><td>无书面化长句</td><td>避免难以口播的复杂从句</td><td><span class="tag-old">原有</span></td><td>表格3-3.3</td></tr>
+<tr><td></td><td></td><td>简洁自然</td><td>生成内容简洁自然</td><td><span class="tag-old">原有</span></td><td>表格3-3.3</td></tr>
+<tr><td>7</td><td>工具调用能力</td><td>工具选择正确率</td><td>正确判断是否调用、调用哪个工具</td><td><span class="tag-old">原有</span></td><td>表格3-3.4</td></tr>
+<tr><td></td><td></td><td>参数填写正确率</td><td>工具调用参数提取正确</td><td><span class="tag-old">原有</span></td><td>表格3-3.4</td></tr>
+<tr><td></td><td></td><td>不乱调用</td><td>不需要调用时是否乱调用</td><td><span class="tag-old">原有</span></td><td>表格3-3.4</td></tr>
+<tr><td></td><td></td><td>调用结果整合正确率</td><td>调用结果整合为自然回复</td><td><span class="tag-old">原有</span></td><td>表格3-3.4</td></tr>
+<tr><td>8</td><td>记忆总结能力</td><td>关键信息提取完整率</td><td>多轮对话中关键信息稳定提取</td><td><span class="tag-old">原有</span></td><td>表格3-3.5</td></tr>
+<tr><td></td><td></td><td>摘要压缩不丢失核心信息</td><td>摘要压缩后不丢失核心信息</td><td><span class="tag-old">原有</span></td><td>表格3-3.5</td></tr>
+<tr><td></td><td></td><td>信息记录正确</td><td>人物信息、偏好、禁忌、待办事项记录正确</td><td><span class="tag-old">原有</span></td><td>表格3-3.5</td></tr>
+<tr><td></td><td></td><td>摘要便于后续使用</td><td>长对话后摘要仍便于后续轮次使用</td><td><span class="tag-old">原有</span></td><td>表格3-3.5</td></tr>
+<tr><td>9</td><td>ASR错字输入鲁棒性</td><td>意图恢复正确率</td><td>ASR错字情况下仍能正确理解用户真实意图</td><td><span class="tag-old">原有</span></td><td>表格3-3.6</td></tr>
+<tr><td></td><td></td><td>关键信息容错率</td><td>关键信息容错能力</td><td><span class="tag-old">原有</span></td><td>表格3-3.6</td></tr>
+<tr><td></td><td></td><td>不过度误解</td><td>对轻微错字是否过度误解</td><td><span class="tag-old">原有</span></td><td>表格3-3.6</td></tr>
+<tr><td></td><td></td><td>主动澄清</td><td>遇到歧义输入时是否会主动澄清</td><td><span class="tag-old">原有</span></td><td>表格3-3.6</td></tr>
+<tr><td>10</td><td>安全与陪伴适配性</td><td>情绪低落场景</td><td>用户情绪低落时的回复适配性</td><td><span class="tag-old">原有</span></td><td>表格3-3.7</td></tr>
+<tr><td></td><td></td><td>误解用户场景</td><td>误解用户时的回复适配性</td><td><span class="tag-old">原有</span></td><td>表格3-3.7</td></tr>
+<tr><td></td><td></td><td>医疗/紧急事件模糊表达</td><td>医疗/紧急事件模糊表达的处理</td><td><span class="tag-old">原有</span></td><td>表格3-3.7</td></tr>
+<tr><td></td><td></td><td>记忆混乱或重复提问场景</td><td>记忆混乱或重复提问时的回复适配性</td><td><span class="tag-old">原有</span></td><td>表格3-3.7</td></tr>
+<tr><td></td><td></td><td>个人信息不泄露</td><td>不泄露、不推断老人的身体数据、住址、联系方式等隐私</td><td><span class="tag-new">新加入</span></td><td>表格2-8（安全与伦理）</td></tr>
+<tr><td></td><td></td><td>温和耐心、尊重老人</td><td>回复态度温和、尊重老人尊严、不居高临下</td><td><span class="tag-new">新加入</span></td><td>表格2-9（安全与伦理）</td></tr>
+<tr><td></td><td></td><td>对抗性prompt防御</td><td>防止被诱导输出危险、违法或不安全内容</td><td><span class="tag-new">新加入</span></td><td>表格2-10（安全与伦理）</td></tr>
+<tr><td></td><td></td><td>避免心理或物理伤害</td><td>回复不会对老人造成心理伤害（焦虑、恐惧）或误导性物理伤害</td><td><span class="tag-new">新加入</span></td><td>表格2-17（对齐与偏好）</td></tr>
+<tr><td></td><td></td><td>无年龄歧视</td><td>不对老人有年龄歧视或刻板印象（如"年纪大了学不会"）</td><td><span class="tag-new">新加入</span></td><td>表格2-11（公平性与偏见）</td></tr>
+<tr><td></td><td></td><td>尊重中国传统文化</td><td>尊重中国传统文化习俗、节气、孝道等观念</td><td><span class="tag-new">新加入</span></td><td>表格2-12（公平性与偏见）</td></tr>
+
+<tr><td>11</td><td>有帮助性</td><td>回复切实解决用户需求</td><td>回复是否对老人有实际帮助，而非泛泛而谈</td><td><span class="tag-new">新加入</span></td><td>表格2-15（对齐与偏好）</td></tr>
+</tbody>
+</table>
+
+<div class="note-box">
+<strong>统计</strong>：原有维度 25 条（速度2 + 效果23）+ 新加入维度 11 条 = 合计 <strong>36 条</strong>（不含分类标题行）。<br>
+新加入维度中：安全与陪伴适配性扩展 6 条、智力 4 条、有帮助性 1 条。已删除"诚实性"维度，因表格3中"回复幻觉率-事实正确性"已覆盖相同含义。
+</div>
+
+<hr>
+
+<!-- ==================== 表格5 ==================== -->
+<h2 id="t5">表格5：表格2 × 表格4 对照验证</h2>
+
+<p>将表格2中筛选出的24个养老场景维度，逐一对照表格4，验证是否已覆盖。</p>
+
+<table>
+<thead>
+<tr>
+    <th>表2序号</th>
+    <th>大类</th>
+    <th>表2具体维度</th>
+    <th>养老场景重要性</th>
+    <th>表4对应维度/条目</th>
+    <th>覆盖状态</th>
+    <th>覆盖说明</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>对话与交互</td><td>多轮对话</td><td>⭐⭐⭐⭐⭐</td><td>多轮连贯性（序号5）</td><td class="cover-yes">✅ 已覆盖</td><td>多轮连贯性-上下文回忆正确率/主题连续性/人设稳定性</td></tr>
+<tr><td>2</td><td>对话与交互</td><td>指令遵循</td><td>⭐⭐⭐⭐⭐</td><td>智力-指令遵循（序号3）</td><td class="cover-yes">🆕 新加入已覆盖</td><td>表格4智力大类，复杂指令理解与执行</td></tr>
+<tr><td>3</td><td>对话与交互</td><td>上下文理解</td><td>⭐⭐⭐⭐⭐</td><td>多轮连贯性（序号5）</td><td class="cover-yes">✅ 已覆盖</td><td>上下文回忆正确率直接对应</td></tr>
+<tr><td>4</td><td>综合知识</td><td>世界知识/常识</td><td>⭐⭐⭐⭐⭐</td><td>回复幻觉率（序号4）</td><td class="cover-yes">✅ 已覆盖</td><td>回复幻觉率-事实正确性直接对应</td></tr>
+<tr><td>5</td><td>综合知识</td><td>专业领域知识（健康方向）</td><td>⭐⭐⭐⭐⭐</td><td>回复幻觉率（序号4）+ 安全与陪伴适配性-医疗/紧急事件模糊表达（序号10）</td><td class="cover-yes">✅ 已覆盖</td><td>通用知识+医疗专项双重覆盖</td></tr>
+<tr><td>6</td><td>综合知识</td><td>中文特有知识</td><td>⭐⭐⭐⭐</td><td>智力-中文特有知识（序号3）</td><td class="cover-yes">🆕 新加入已覆盖</td><td>表格4智力大类，节气/习俗/传统文化</td></tr>
+<tr><td>7</td><td>安全与伦理</td><td>内容安全</td><td>⭐⭐⭐⭐⭐</td><td>安全与陪伴适配性（序号10）</td><td class="cover-yes">✅ 已覆盖</td><td>高危场景处理/情绪安抚/拒答/转人工</td></tr>
+<tr><td>8</td><td>安全与伦理</td><td>隐私保护</td><td>⭐⭐⭐⭐⭐</td><td>安全与陪伴适配性-隐私保护（序号10）</td><td class="cover-yes">🆕 新加入已覆盖</td><td>表格4安全与陪伴适配性扩展，不泄露不推断个人隐私</td></tr>
+<tr><td>9</td><td>安全与伦理</td><td>价值观对齐</td><td>⭐⭐⭐⭐⭐</td><td>安全与陪伴适配性-价值观对齐（序号10）</td><td class="cover-yes">🆕 新加入已覆盖</td><td>表格4安全与陪伴适配性扩展，温和耐心尊重老人</td></tr>
+<tr><td>10</td><td>安全与伦理</td><td>越狱抵抗</td><td>⭐⭐⭐⭐</td><td>安全与陪伴适配性-越狱抵抗（序号10）</td><td class="cover-yes">🆕 新加入已覆盖</td><td>表格4安全与陪伴适配性扩展，对抗性prompt防御</td></tr>
+<tr><td>11</td><td>公平性与偏见</td><td>人口统计偏见（年龄歧视）</td><td>⭐⭐⭐⭐</td><td>安全与陪伴适配性-无年龄歧视（序号10）</td><td class="cover-yes">🆕 新加入已覆盖</td><td>表格4安全与陪伴适配性扩展，无年龄歧视/刻板印象</td></tr>
+<tr><td>12</td><td>公平性与偏见</td><td>文化偏见</td><td>⭐⭐⭐⭐</td><td>安全与陪伴适配性-尊重中国传统文化（序号10）</td><td class="cover-yes">🆕 新加入已覆盖</td><td>表格4安全与陪伴适配性扩展，尊重中国传统文化习俗</td></tr>
+<tr><td>13</td><td>事实性与幻觉</td><td>事实一致性</td><td>⭐⭐⭐⭐⭐</td><td>回复幻觉率（序号4）</td><td class="cover-yes">✅ 已覆盖</td><td>回复幻觉率-事实正确性直接对应</td></tr>
+<tr><td>14</td><td>事实性与幻觉</td><td>幻觉率</td><td>⭐⭐⭐⭐⭐</td><td>回复幻觉率（序号4）</td><td class="cover-yes">✅ 已覆盖</td><td>编造事实/虚构信息比例</td></tr>
+<tr><td>15</td><td>对齐与偏好</td><td>有帮助性</td><td>⭐⭐⭐⭐⭐</td><td>有帮助性（序号11）</td><td class="cover-yes">🆕 新加入已覆盖</td><td>表格4新补充，回复切实解决问题</td></tr>
+<tr><td>16</td><td>对齐与偏好</td><td>诚实性</td><td>⭐⭐⭐⭐⭐</td><td>回复幻觉率-事实正确性（序号4）</td><td class="cover-yes">✅ 已覆盖</td><td>表格3回复幻觉率-事实正确性已覆盖，不编造/坦诚不确定性</td></tr>
+<tr><td>17</td><td>对齐与偏好</td><td>无害性</td><td>⭐⭐⭐⭐⭐</td><td>安全与陪伴适配性-无害性（序号10）</td><td class="cover-yes">🆕 新加入已覆盖</td><td>表格4安全与陪伴适配性扩展，避免心理/物理伤害</td></tr>
+<tr><td>18</td><td>语言理解</td><td>语义理解</td><td>⭐⭐⭐⭐⭐</td><td>口语化程度（序号6）+ ASR错字鲁棒性（序号9）</td><td class="cover-yes">✅ 已覆盖</td><td>语义理解通过口语化适配+错字容错双重保障</td></tr>
+<tr><td>19</td><td>生成与创作</td><td>文本生成</td><td>⭐⭐⭐⭐⭐</td><td>口语化程度（序号6）</td><td class="cover-yes">✅ 已覆盖</td><td>适合TTS播报/简洁自然</td></tr>
+<tr><td>20</td><td>鲁棒性与泛化</td><td>输入扰动鲁棒性</td><td>⭐⭐⭐⭐⭐</td><td>ASR错字输入鲁棒性（序号9）</td><td class="cover-yes">✅ 已覆盖</td><td>意图恢复/关键信息容错/主动澄清</td></tr>
+<tr><td>21</td><td>推理与逻辑</td><td>逻辑推理</td><td>⭐⭐⭐</td><td>智力-逻辑推理（序号3）</td><td class="cover-yes">🆕 新加入已覆盖</td><td>表格4智力大类，简单因果条件推理</td></tr>
+<tr><td>22</td><td>推理与逻辑</td><td>常识推理</td><td>⭐⭐⭐⭐</td><td>智力-常识推理（序号3）</td><td class="cover-yes">🆕 新加入已覆盖</td><td>表格4智力大类，日常生活场景常识判断</td></tr>
+<tr><td>23</td><td>智能体与工具</td><td>工具调用</td><td>⭐⭐⭐⭐</td><td>工具调用能力（序号7）</td><td class="cover-yes">✅ 已覆盖</td><td>工具选择/参数提取/结果整合</td></tr>
+<tr><td>24</td><td>效率与性能</td><td>推理速度/延迟</td><td>⭐⭐⭐⭐</td><td>首词延迟(TTFT)（序号1）+ 生成速度（序号2）</td><td class="cover-yes">✅ 已覆盖</td><td>TTFT+生成速度，双重速度指标</td></tr>
+</tbody>
+</table>
+
+<div class="note-box">
+<strong>对照统计</strong>：表格2 → 表格4 覆盖验证结果：
+<ul>
+    <li><strong>✅ 原有已覆盖</strong>：13个维度（54.2%）— 表格3已直接包含（含诚实性由回复幻觉率-事实正确性覆盖）</li>
+    <li><strong>🆕 新加入已覆盖</strong>：11个维度（45.8%）— 表格4新补充（序号3智力、序号10安全与陪伴适配性、序号11有帮助性）</li>
+    <li><strong>❌ 未覆盖</strong>：0个（0%）</li>
+</ul>
+<strong>结论</strong>：表格2筛选的24个养老场景维度，在表格4中<strong>全部覆盖</strong>，无遗漏。
+</div>
+
+</body>
+</html>
