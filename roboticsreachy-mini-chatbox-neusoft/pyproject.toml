@@ -66,7 +66,7 @@ all_vision = [
   "mediapipe==0.10.14",
 ]
 
-cascade = ["sounddevice>=0.4.6", "librosa>=0.10.0", "pyyaml>=6.0"]
+cascade = ["sounddevice>=0.4.6", "librosa>=0.10.0", "pyyaml>=6.0", "transformers>=5.0.0rc2", "num2words"]
 cascade_silero_vad = ["torch>=2.0", "torchaudio>=2.0"]
 cascade_silero_vad_onnx = ["onnxruntime>=1.17.0"]
 cascade_parakeet = ["parakeet-mlx>=0.4.0", "ffmpeg-python>=0.2.0"]
@@ -83,7 +83,7 @@ cascade_gradium = ["gradium>=0.5.4; python_version>='3.12'"]
 cascade_gliner = ["gliner>=0.2.0"]
 cascade_qwen = ["websockets>=13.0"]
 cascade_piper = ["piper-tts[zh]>=1.2.0"]
-cascade_zipformer = ["sherpa-onnx>=1.10.0"]
+cascade_zipformer = ["sherpa-onnx==1.13.1"]
 cascade_all = [
   "reachy_mini_conversation_app[cascade]",
   "reachy_mini_conversation_app[cascade_silero_vad]",
@@ -99,7 +99,8 @@ cascade_all = [
   "reachy_mini_conversation_app[cascade_qwen]",
   "reachy_mini_conversation_app[cascade_piper]",
   "reachy_mini_conversation_app[cascade_kokoro_zh_onnx]",
-  "reachy_mini_conversation_app[cascade_zipformer]"
+  "reachy_mini_conversation_app[cascade_zipformer]",
+  "reachy_mini_conversation_app[cascade_gliner]"
 ]
 # Note: cascade_gradium excluded from cascade_all because gradium requires Python >=3.12
 
