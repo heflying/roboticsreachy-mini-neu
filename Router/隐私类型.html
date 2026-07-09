@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>八大类敏感个人信息分类表 | 国家标准参考</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Noto Sans', system-ui, -apple-system, 'Microsoft YaHei', sans-serif;
+            background: #f0f4f8;
+            padding: 2rem 1.5rem;
+            color: #1a2c3e;
+            line-height: 1.45;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* 标题区 */
+        .header {
+            background: linear-gradient(135deg, #0b2b3b 0%, #123e52 100%);
+            padding: 1.8rem 2rem;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .header h1:before {
+            content: "🔒";
+            font-size: 1.8rem;
+            font-weight: normal;
+        }
+
+        .header .sub {
+            font-size: 0.95rem;
+            opacity: 0.85;
+            border-left: 3px solid #5bc0de;
+            padding-left: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .badge-ref {
+            background: rgba(255,255,255,0.2);
+            border-radius: 40px;
+            padding: 0.2rem 0.8rem;
+            font-size: 0.75rem;
+            display: inline-block;
+            margin-top: 0.7rem;
+            font-family: monospace;
+        }
+
+        /* 表格包装器 — 响应式滚动 */
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 0 0 1px 0;
+            scroll-behavior: smooth;
+        }
+
+        /* 主表格样式 */
+        .privacy-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            background-color: #ffffff;
+            min-width: 720px;
+        }
+
+        .privacy-table th {
+            background-color: #eef2f7;
+            color: #0b3b4f;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+            border-bottom: 2px solid #cbdbe2;
+            text-align: left;
+            font-size: 1rem;
+            letter-spacing: 0.3px;
+        }
+
+        .privacy-table td {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid #e6edf4;
+            vertical-align: top;
+            background-color: #ffffff;
+        }
+
+        /* 分类样式 */
+        .category-badge {
+            display: inline-block;
+            background: #eef2ff;
+            color: #1f5e7e;
+            font-weight: 600;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .cat-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #0e2f3f;
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+
+        .desc-text {
+            color: #2c4b62;
+            font-size: 0.88rem;
+            line-height: 1.4;
+            margin-top: 4px;
+        }
+
+        .example-list {
+            margin: 0;
+            padding-left: 1.2rem;
+            list-style-type: none;
+        }
+
+        .example-list li {
+            margin-bottom: 0.35rem;
+            font-size: 0.88rem;
+            color: #1f4e6e;
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        .example-list li:before {
+            content: "•";
+            color: #2c8fbc;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .highlight-note {
+            background-color: #fef7e0;
+            border-left: 4px solid #ffb347;
+            padding: 0.6rem 1rem;
+            margin: 1rem 0 0.5rem;
+            font-size: 0.85rem;
+            border-radius: 12px;
+            color: #7a6400;
+        }
+
+        .legal-footnote {
+            background: #f9fafc;
+            padding: 1.4rem 2rem;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.85rem;
+            color: #4b6a7c;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .note-text {
+            max-width: 75%;
+        }
+
+        .standard-ref {
+            font-family: monospace;
+            background: #eef2f5;
+            padding: 0.3rem 0.8rem;
+            border-radius: 24px;
+            font-size: 0.75rem;
+        }
+
+        @media (max-width: 750px) {
+            body {
+                padding: 1rem;
+            }
+            .privacy-table th, .privacy-table td {
+                padding: 0.85rem 1rem;
+            }
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            .legal-footnote {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .note-text {
+                max-width: 100%;
+            }
+        }
+
+        /* 健康/身体状况高亮提示 */
+        .health-em {
+            background: #dff6f0;
+            border-radius: 16px;
+            padding: 0.2rem 0.5rem;
+            font-weight: 500;
+            color: #006d5e;
+        }
+
+        .tooltip-info {
+            cursor: help;
+            border-bottom: 1px dashed #7e9eb5;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>敏感个人信息 · 八大分类明细</h1>
+        <div class="sub">依据 GB/T 45574-2025《数据安全技术 敏感个人信息处理安全要求》及个人信息保护法框架制定<br>核心判定标准：一旦泄露或非法使用，容易导致人格尊严受损或人身、财产安全受危害。</div>
+        <div class="badge-ref">📌 参考标准：中国国家标准 · 敏感个人信息识别指南</div>
+    </div>
+    <div class="table-wrapper">
+        <table class="privacy-table">
+            <thead>
+                <tr>
+                    <th width="18%">类别</th>
+                    <th width="37%">核心描述</th>
+                    <th width="45%">典型示例 / 具体信息项</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 1. 生物识别信息 -->
+                <tr>
+                    <td><span class="category-badge">01</span><div class="cat-title">生物识别信息</div></td>
+                    <td class="desc-text">对个体物理、生物或行为特征进行技术处理得到的，能单独或结合其他信息识别个人身份的信息。</td>
+                    <td>
+                        <ul class="example-list">
+                            <li>人脸、指纹、声纹、掌纹、虹膜</li>
+                            <li>基因、脱氧核糖核酸（DNA）</li>
+                            <li>步态、笔迹（用于身份鉴别）</li>
+                            <li>其他具有个体唯一性的生物特征模板</li>
+                        </ul>
+                    </td>
+                </tr>
+                <!-- 2. 宗教信仰信息 -->
+                <tr>
+                    <td><span class="category-badge">02</span><div class="cat-title">宗教信仰信息</div></td>
+                    <td class="desc-text">与个人信仰的宗教、宗教组织和宗教活动相关的信息，可能影响社会公正对待。</td>
+                    <td>
+                        <ul class="example-list">
+                            <li>信仰的宗教派别、归属的宗教组织</li>
+                            <li>宗教组织中的职位或头衔</li>
+                            <li>参加的宗教仪式、特殊宗教习俗</li>
+                            <li>宗教相关饮食禁忌等敏感特征</li>
+                        </ul>
+                    </td>
+                </tr>
+                <!-- 3. 特定身份信息 -->
+                <tr>
+                    <td><span class="category-badge">03</span><div class="cat-title">特定身份信息</div></td>
+                    <td class="desc-text">对个人人格尊严和社会评价有重大影响，或可能导致社会歧视的身份信息。</td>
+                    <td>
+                        <ul class="example-list">
+                            <li>残障人士身份（残疾证信息、残疾类别）</li>
+                            <li>不适宜公开的职业身份（如未成年人犯罪记录中的特定身份）</li>
+                            <li>因政策法规需要特殊保护的身份类别</li>
+                            <li>贫困救助对象等易受歧视身份</li>
+                        </ul>
+                    </td>
+                </tr>
+                <!-- 4. 医疗健康信息（重点突出身体状况） -->
+                <tr>
+                    <td><span class="category-badge">04</span><div class="cat-title">医疗健康信息</div>
+                        <div class="desc-text" style="margin-top:6px;"><span class="health-em">🏥 包含身体状况核心数据</span></div>
+                    </td>
+                    <td class="desc-text">与个人身体或心理健康状况相关的信息，以及在医疗服务全流程中产生的信息。<br> <span class="tooltip-info" title="基本体质信息如体重、身高若不与疾病关联可能不属于敏感项">※ 基本体质若脱离医疗背景可能降级</span></td>
+                    <td>
+                        <ul class="example-list">
+                            <li><strong>身体状况类：</strong>病症描述、既往病史、家族病史、传染病史、生育信息</li>
+                            <li><strong>诊疗就诊记录：</strong>住院志、医嘱单、手术及麻醉记录、护理记录、病程记录</li>
+                            <li><strong>检验检查数据：</strong>检验报告、影像报告（CT/X光等）、病理报告、体检结论</li>
+                            <li><strong>用药与康复：</strong>用药记录、过敏信息、输血信息、康复计划</li>
+                            <li>心理健康评估、精神类疾病相关信息</li>
+                        </ul>
+                        <div class="highlight-note">📌 特别关注：身体状况信息（疾病、症状、检验结果）是医疗健康类的核心，属于最典型敏感个人信息。</div>
+                    </td>
+                </tr>
+                <!-- 5. 金融账户信息 -->
+                <tr>
+                    <td><span class="category-badge">05</span><div class="cat-title">金融账户信息</div></td>
+                    <td class="desc-text">与个人银行、证券等账户及资金交易相关的信息，直接关联财产安全。</td>
+                    <td>
+                        <ul class="example-list">
+                            <li>银行/证券/基金/保险/公积金账号及密码</li>
+                            <li>支付账户、银行卡磁道数据或芯片等效信息</li>
+                            <li>收入明细、账户余额、交易流水</li>
+                            <li>信用卡安全码（CVV）、有效期等验证信息</li>
+                            <li>理财持仓、投资偏好等风险敏感数据</li>
+                        </ul>
+                    </td>
+                </tr>
+                <!-- 6. 行踪轨迹信息 -->
+                <tr>
+                    <td><span class="category-badge">06</span><div class="cat-title">行踪轨迹信息</div></td>
+                    <td class="desc-text">个人在一定期间内因地理位置、活动地点和活动轨迹移动变化而形成的连续轨迹信息。</td>
+                    <td>
+                        <ul class="example-list">
+                            <li>连续精准定位轨迹、实时GPS位置序列</li>
+                            <li>车辆行驶轨迹（行车记录仪联网数据）</li>
+                            <li>人员活动路线、出入敏感地点记录</li>
+                            <li>基于基站/WiFi的连续性定位追踪数据</li>
+                            <li>固定时间段内居住地、办公地频繁往返路线</li>
+                        </ul>
+                    </td>
+                </tr>
+                <!-- 7. 不满十四周岁未成年人个人信息 -->
+                <tr>
+                    <td><span class="category-badge">07</span><div class="cat-title">不满十四周岁未成年人个人信息</div></td>
+                    <td class="desc-text">14周岁以下未成年人的个人信息，保护等级极高，需监护人单独同意。</td>
+                    <td>
+                        <ul class="example-list">
+                            <li>未成年人姓名、出生日期、家庭详细地址</li>
+                            <li>学校信息、班级、学籍号</li>
+                            <li>监护人联系方式、家庭成员关联信息</li>
+                            <li>儿童生物识别信息、可识别儿童身份的影像</li>
+                            <li>儿童健康信息、疫苗接种记录等</li>
+                        </ul>
+                    </td>
+                </tr>
+                <!-- 8. 其他敏感个人信息 -->
+                <tr>
+                    <td><span class="category-badge">08</span><div class="cat-title">其他敏感个人信息</div></td>
+                    <td class="desc-text">上述类别未能完全覆盖，但同样可能严重侵害人格尊严或人身财产安全的特殊信息。</td>
+                    <td>
+                        <ul class="example-list">
+                            <li>精准定位信息（实时单点精准位置）</li>
+                            <li>居民身份证照片（含照片的身份证影像）</li>
+                            <li>性取向、性生活及私密生活信息</li>
+                            <li>征信信息、信用报告详细记录</li>
+                            <li>犯罪记录（含案底、刑事处罚记录）</li>
+                            <li>显示身体私密部位的照片、视频或生物特征图像</li>
+                            <li>工会会员特定歧视性信息等</li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="legal-footnote">
+        <div class="note-text">
+            ⚖️ <strong>判定原则</strong>：一般个人信息汇聚处理后若整体泄露可能导致重大影响，则参照敏感个人信息保护。<br>
+            📋 身份证号码本身根据2025标准不再单独归类“特定身份”，但其照片纳入“其他敏感个人信息”范畴；多项一般信息组合产生敏感效应时需整体高等级保护。
+        </div>
+        <div class="standard-ref">基于 GB/T 45574-2025 & 《个人信息保护法》敏感信息释义</div>
+    </div>
+    <!-- 附加说明模块：针对身体状况与文本隐私分类场景 -->
+    <div style="padding: 1rem 2rem 1.8rem 2rem; background: #fefef7; border-top: 1px solid #e9ecf0;">
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-start;">
+            <div style="background: #eef2fc; border-radius: 30px; padding: 0.3rem 1rem; font-size: 0.75rem; font-weight: 500;">🔍 隐私分类任务提示</div>
+            <div style="font-size: 0.85rem; color: #2c5368;">
+                针对您关注的 <strong>「身体状况信息」</strong> 与 <strong>「PII 识别」</strong>，上表第4类 <strong>医疗健康信息</strong> 为核心类别，覆盖病症、病史、检验结果及就诊记录等。其他类别如金融账户、行踪轨迹、生物识别信息也属于高度敏感个人隐私。实际文本标注时可结合具体内容参考此分类体系。
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
