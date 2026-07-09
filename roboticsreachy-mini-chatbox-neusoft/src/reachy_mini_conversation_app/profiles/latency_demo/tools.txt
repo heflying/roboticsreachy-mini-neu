@@ -1,0 +1,3 @@
+# Latency demo - forces look_around on every response
+look_around
+camera

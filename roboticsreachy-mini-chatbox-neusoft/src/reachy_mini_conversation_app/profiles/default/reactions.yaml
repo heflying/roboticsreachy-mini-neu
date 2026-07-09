@@ -1,0 +1,43 @@
+- name: music_excitement
+  callback: excited_about_music
+  trigger:
+    words: [music, guitar, piano, drum, violin]
+
+- name: food_reaction
+  callback: react_to_food_entity
+  trigger:
+    entities: [food]
+  repeatable: true
+
+- name: groovy_dance
+  callback: do_groovy_dance
+  trigger:
+    all:
+      - words: [danc*]
+      - words: [groov*]
+
+- name: reachy_name
+  callback: react_to_name
+  trigger:
+    words: [reachy, richie, reechy]
+  params:
+    emotion: helpful1
+
+#- name: turn_left
+#  callback: turn_to_direction
+#  trigger:
+#    all:
+#      - words: [turn*]
+#      - words: [left]
+#  params:
+#    direction: left
+#
+#- name: turn_right
+#  callback: turn_to_direction
+#  trigger:
+#    all:
+#      - words: [turn*]
+#      - words: [right]
+#  params:
+#    direction: right
+

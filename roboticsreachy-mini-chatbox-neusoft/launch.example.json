@@ -1,0 +1,135 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: cascade",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/cascade_test/debug/debug_main.py",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+            "args": [
+                "--no-camera", 
+                "--host", "192.168.10.103",
+            ],
+            "env":{},
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false
+        },
+        {
+            "name": "Python Debugger: omni",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/cascade_test/debug/debug_main.py",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+            "args": [
+                "--no-camera", 
+                "--host", "192.168.10.103",
+                "--realtime",
+            ],
+            "env":{},
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false
+        },
+        {
+            "name": "Python Debugger: test_llm_chat",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/cascade_test/debug/debug_llm_chat.py",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+            "args": [
+            ],
+            "env":{},
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false
+        },
+        {
+            "name": "Python Debugger: fall_detection (single)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/cascade_test/debug/debug_fall_detection.py",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+            "args": [
+                "--input", "${workspaceFolder}/cascade_test/debug/imgs/no_fall1.bmp",
+                "--verbose",
+            ],
+            "env":{},
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false
+        },
+        {
+            "name": "Python Debugger: fall_detection (batch)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/cascade_test/debug/debug_fall_detection.py",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+            "args": [
+                "--input", "${workspaceFolder}/cascade_test/debug/imgs/",
+            ],
+            "env":{},
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false
+        },
+        {
+            "name": "Python Debugger: eval_cascade",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/cascade_test/pipeline/run_pipeline.py",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+            "args": [
+                "--input", "${workspaceFolder}/cascade_test/pipeline/input",
+                "--output-dir", "${workspaceFolder}/cascade_test/pipeline/output",
+                //"--memory",
+            ],
+            "env":{},
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false
+        },
+        {
+            "name": "Python Debugger: eval_omni",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/cascade_test/omni/run_omni.py",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+            "args": [
+                "--input_dir", "${workspaceFolder}/cascade_test/pipeline/input",
+                "--output_dir", "${workspaceFolder}/cascade_test/omni/output",
+            ],
+            "env":{},
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false
+        },
+        {
+            "name": "Python Debugger: eval_compare",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/cascade_test/pipeline/eval_tool.py",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+            "args": [
+                "--models", "omni", "${workspaceFolder}/cascade_test/omni/output_qwen3.5-omni-flash-realtime",
+                "--models", "gemma4-e2b", "${workspaceFolder}/cascade_test/pipeline/output-gemma4-e2b",
+                "--models", "qwen3.5-2b", "${workspaceFolder}/cascade_test/pipeline/output-qwen3.5-2b",
+                "--models", "qwen3-1.7b", "${workspaceFolder}/cascade_test/pipeline/output-qwen3-1.7b",
+                "--models", "deepseek-r1-1.5b", "${workspaceFolder}/cascade_test/pipeline/output-deepseek-r1-1.5b", 
+                "--models", "qwen2.5-1.5b", "${workspaceFolder}/cascade_test/pipeline/output-qwen2.5-1.5b",
+                "--config", "${workspaceFolder}/cascade_test/pipeline/eval_dimensions.yaml",
+                "--input", "${workspaceFolder}/cascade_test/pipeline/input",
+                "--output", "${workspaceFolder}/cascade_test/pipeline/eval_results.json",
+                "--port", "7860",
+            ],
+            "env":{},
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false
+        },
+    ]
+}

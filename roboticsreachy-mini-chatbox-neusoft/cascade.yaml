@@ -1,0 +1,536 @@
+# Cascade configuration: ASR → LLM → TTS pipeline
+# API keys are in .env file (OPENAI_API_KEY, DEEPGRAM_API_KEY, GEMINI_API_KEY, ELEVENLABS_API_KEY)
+
+vad:
+  backend: onnx              # onnx (default) | pytorch
+  threshold: 0.5
+  min_speech_duration_ms: 250
+  min_silence_duration_ms: 500
+  sentence_pause_threshold_ms: 200  # Silence duration to trigger sentence pause for LLM warmup
+  enable_sentence_warmup: false      # Disable LLM warmup on sentence pauses
+
+asr:
+  provider: parakeet_mlx_progressive  # deepgram, whisper_openai, parakeet_mlx_progressive
+
+  providers:
+    # ========== CLOUD PROVIDERS ==========
+    whisper_openai:
+      module: whisper_openai
+      class: WhisperOpenAIASR
+      streaming: false
+      location: cloud
+      requires: [OPENAI_API_KEY]
+      hardware: null
+      description: "OpenAI Whisper API - high quality cloud batch ASR"
+      # Settings
+      model: whisper-1
+      # Pricing (Feb 2026): $0.006/minute = $0.0001/second
+      cost_per_second: 0.0001
+
+    deepgram:
+      module: deepgram
+      class: DeepgramASR
+      streaming: true
+      location: cloud
+      requires: [DEEPGRAM_API_KEY]
+      hardware: null
+      description: "Deepgram Nova - real-time cloud streaming ASR"
+      # Settings
+      model: nova-2  # or nova-3
+      language: en
+
+    openai_realtime_asr:
+      module: openai_realtime_asr
+      class: OpenAIRealtimeASR
+      streaming: true
+      location: cloud
+      requires: [OPENAI_API_KEY]
+      hardware: null
+      description: "OpenAI Realtime - GPT-4o streaming transcription via WebSocket"
+      # Settings
+      model: gpt-4o-transcribe  # or gpt-4o-mini-transcribe (faster, lower quality)
+      language: en
+      prompt: ""  # Optional: guide transcription style/vocabulary
+      use_server_vad: true  # Enable for real-time partials during speech; both VADs can coexist
+
+    qwen_realtime_asr:
+      module: qwen_realtime
+      class: QwenRealtimeASR
+      streaming: true
+      location: cloud
+      requires: [DASHSCOPE_API_KEY]
+      hardware: null
+      import_check: websockets
+      install_extra: cascade_qwen
+      description: "Qwen realtime ASR via DashScope WebSocket"
+      model: qwen3-asr-flash-realtime
+      websocket_url: wss://dashscope.aliyuncs.com/api-ws/v1/realtime
+      sample_rate: 16000
+      language: zh
+      enable_itn: true
+
+    # ========== LOCAL PROVIDERS (Apple Silicon) ==========
+    parakeet_mlx_progressive:
+      module: parakeet_mlx_progressive
+      class: ParakeetMLXProgressiveASR
+      streaming: true
+      location: local
+      requires: []
+      hardware: apple_silicon
+      import_check: mlx_audio
+      install_extra: cascade_parakeet_progressive
+      description: "Parakeet MLX progressive - live transcription with sentence-aware sliding window"
+      # Settings
+      model: mlx-community/parakeet-tdt-0.6b-v3
+      precision: float16
+      max_window_size: 15.0
+      sentence_buffer: 2.0
+
+    voxtral_mlx:
+      module: voxtral_mlx
+      class: VoxtralMLXASR
+      streaming: true
+      location: local
+      requires: []
+      hardware: apple_silicon
+      import_check: mlx_audio
+      install_extra: cascade_voxtral_mlx
+      description: "Voxtral Mini 4B Realtime - multilingual local ASR via MLX"
+      # Settings
+      model: mlx-community/Voxtral-Mini-4B-Realtime-6bit
+      language: en
+      max_tokens: 256
+      transcription_delay_ms: 480
+
+    # ========== LOCAL PROVIDERS (CUDA) ==========
+    parakeet_nemo_progressive:
+      module: parakeet_nemo_progressive
+      class: ParakeetNeMoProgressiveASR
+      streaming: true
+      location: local
+      requires: []
+      hardware: cuda
+      import_check: nemo.collections
+      install_extra: cascade_nemotron
+      description: "Parakeet TDT via NeMo - progressive ASR with sliding window (CUDA)"
+      # Settings
+      model: nvidia/parakeet-tdt-0.6b-v2
+      max_window_size: 15.0
+      sentence_buffer: 2.0
+
+    nemotron:
+      module: nemotron
+      class: NemotronASR
+      streaming: true
+      location: local
+      requires: []
+      hardware: cuda
+      import_check: nemo.collections
+      install_extra: cascade_nemotron
+      description: "NVIDIA Nemotron - cache-aware streaming ASR"
+      # Settings
+      model: nvidia/nemotron-speech-streaming-en-0.6b
+      chunk_size_ms: 560  # 80, 160, 560, or 1120
+
+    # ========== LOCAL PROVIDERS (CPU) ==========
+    zipformer_sherpa:
+      module: zipformer_sherpa
+      class: ZipformerSherpaASR
+      streaming: true
+      location: local
+      requires: []
+      hardware: null
+      import_check: sherpa_onnx
+      install_extra: cascade_zipformer
+      description: "Sherpa-ONNX Zipformer - 本地流式中文 ASR (CPU, ~160MB)"
+      # Settings
+      model_id: csukuangfj/sherpa-onnx-streaming-zipformer-zh-int8-2025-06-30
+      model_dir: models/ASR/zipformer-zh
+      num_threads: 1
+      sample_rate: 16000
+      decoding_method: greedy_search
+      enable_endpoint: true
+      rule1_min_trailing_silence: 2.4
+      rule2_min_trailing_silence: 1.2
+
+    paraformer_sherpa:
+      module: paraformer_sherpa
+      class: ParaformerSherpaASR
+      streaming: true
+      location: local
+      requires: []
+      hardware: null
+      import_check: sherpa_onnx
+      install_extra: cascade_zipformer
+      description: "Sherpa-ONNX Paraformer - 本地流式三语 ASR (CPU, U2++ CTC+Attention, 普粤英)"
+      # Settings
+      model_id: csukuangfj/sherpa-onnx-streaming-paraformer-trilingual-zh-cantonese-en
+      model_dir: models/ASR/paraformer-trilingual-zh-cantonese-en
+      num_threads: 1
+      sample_rate: 16000
+      decoding_method: greedy_search
+      enable_endpoint: true
+      rule1_min_trailing_silence: 2.4
+      rule2_min_trailing_silence: 1.2
+
+
+llm:
+  provider: qwen-flash  # qwen-flash, qwen-plus, ollama, openai_gpt, gpt-5.2-chat, gemini-2.5-flash-lite, local-qwen3
+  temperature: 0.0
+
+  providers:
+
+    # ========== 本地 LLM (Ollama) ==========
+    local-qwen3:
+      module: ollama
+      class: OllamaLLM
+      location: local
+      requires: []
+      description: "Local Qwen3-1.7B via Ollama (localhost:11434), offline capable"
+      model: qwen3:1.7b
+      base_url: http://localhost:11434/v1
+      input_cost_per_1m: 0.0
+      output_cost_per_1m: 0.0
+
+    gpt-5.2-chat:
+      module: openai
+      class: OpenAILLM
+      location: cloud
+      requires: [ OPENAI_API_KEY ]
+      description: "OpenAI GPT 5.2 Chat"
+      # Settings
+      model: gpt-5.2-chat-latest
+      # Pricing (Feb 2026)
+      input_cost_per_1m: 1.75
+      output_cost_per_1m: 14.00
+
+    gpt-4o-mini:
+      module: openai
+      class: OpenAILLM
+      location: cloud
+      requires: [OPENAI_API_KEY]
+      description: "OpenAI GPT models"
+      # Settings
+      model: gpt-4o-mini
+      # Pricing (Feb 2026)
+      input_cost_per_1m: 0.15
+      output_cost_per_1m: 0.60
+
+    gemini-2.5-flash-lite:
+      module: gemini
+      class: GeminiLLM
+      location: cloud
+      requires: [GEMINI_API_KEY]
+      description: "Google Gemini models"
+      # Settings
+      model: gemini-2.5-flash-lite
+      # Pricing (Feb 2026)
+      input_cost_per_1m: 0.075
+      output_cost_per_1m: 0.30
+
+    gemini-3.1-flash-lite:
+      module: gemini
+      class: GeminiLLM
+      location: cloud
+      requires: [GEMINI_API_KEY]
+      description: "Google Gemini 3.1 Flash Lite - fastest, most cost-efficient Gemini 3 model"
+      # Settings
+      model: gemini-3.1-flash-lite-preview
+      # Pricing (March 2026): $0.25/1M input, $1.50/1M output
+      input_cost_per_1m: 0.25
+      output_cost_per_1m: 1.50
+
+    qwen-plus:
+      module: qwen
+      class: QwenLLM
+      location: cloud
+      requires: [DASHSCOPE_API_KEY]
+      description: "Qwen Plus via DashScope OpenAI-compatible API"
+      model: qwen-plus
+      base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+      input_cost_per_1m: 0.0
+      output_cost_per_1m: 0.0
+
+    qwen-flash:
+      module: qwen
+      class: QwenLLM
+      location: cloud
+      requires: [DASHSCOPE_API_KEY]
+      description: "Qwen Flash via DashScope OpenAI-compatible API, optimized for lower latency"
+      model: qwen-flash
+      base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+      enable_thinking: false
+      input_cost_per_1m: 0.0
+      output_cost_per_1m: 0.0
+
+    ollama-qwen2.5-0.5b:
+      module: ollama
+      class: OllamaLLM
+      location: local
+      requires: []
+      description: "Ollama via native API"
+      model: qwen2.5:0.5b
+      base_url: http://localhost:11434/v1
+      input_cost_per_1m: 0.0
+      output_cost_per_1m: 0.0
+
+    ollama-qwen2.5-1.5b-instruct:
+      module: ollama
+      class: OllamaLLM
+      location: local
+      requires: []
+      description: "Ollama via native API"
+      model: qwen2.5:1.5b-instruct
+      base_url: http://localhost:11434/v1
+      input_cost_per_1m: 0.0
+      output_cost_per_1m: 0.0
+
+    ollama-qwen2.5-3b-instruct:
+      module: ollama
+      class: OllamaLLM
+      location: local
+      requires: []
+      description: "Ollama via native API"
+      model: qwen2.5:3b-instruct
+      base_url: http://localhost:11434/v1
+      input_cost_per_1m: 0.0
+      output_cost_per_1m: 0.0
+
+    ollama-qwen2-1.5b:
+      module: ollama
+      class: OllamaLLM
+      location: local
+      requires: []
+      description: "Ollama via native API"
+      model: qwen2:1.5b
+      base_url: http://localhost:11434/v1
+      input_cost_per_1m: 0.0
+      output_cost_per_1m: 0.0
+    
+    ollama-qwen3-1.7b:
+      module: ollama
+      class: OllamaLLM
+      location: local
+      requires: []
+      description: "Ollama via native API"
+      model: qwen3:1.7b
+      base_url: http://localhost:11434/v1
+      input_cost_per_1m: 0.0
+      output_cost_per_1m: 0.0
+    
+    ollama-qwen3.5-2b:
+      module: ollama
+      class: OllamaLLM
+      location: local
+      requires: []
+      description: "Ollama via native API"
+      model: qwen3.5:2b
+      base_url: http://localhost:11434/v1
+      input_cost_per_1m: 0.0
+      output_cost_per_1m: 0.0
+
+    ollama-deepseek-r1-1.5b:
+      module: ollama
+      class: OllamaLLM
+      location: local
+      requires: []
+      description: "Ollama via native API"
+      model: deepseek-r1:1.5b
+      base_url: http://localhost:11434/v1
+      input_cost_per_1m: 0.0
+      output_cost_per_1m: 0.0
+
+    ollama-gemma4-e2b:
+      module: ollama
+      class: OllamaLLM
+      location: local
+      requires: []
+      description: "Ollama via native API"
+      model: gemma4:e2b
+      base_url: http://localhost:11434/v1
+      input_cost_per_1m: 0.0
+      output_cost_per_1m: 0.0
+
+    # ========== 科大讯飞星火 WebSocket LLM (低延迟) ==========
+    spark-ultra:
+      module: spark
+      class: SparkLLM
+      location: cloud
+      requires: [SPARK_API_KEY]
+      import_check: websockets
+      install_extra: cascade_qwen  # websockets is already included
+      description: "科大讯飞星火 Ultra via WebSocket - 低延迟流式输出"
+      model: ultra
+      # API key format: "key:secret" (colon-separated)
+      # Pricing (参考): ~0.01-0.02/千tokens
+      input_cost_per_1m: 0.0
+      output_cost_per_1m: 0.0
+
+    spark-max:
+      module: spark
+      class: SparkLLM
+      location: cloud
+      requires: [SPARK_API_KEY]
+      import_check: websockets
+      install_extra: cascade_qwen
+      description: "科大讯飞星火 Max via WebSocket"
+      model: max
+      input_cost_per_1m: 0.0
+      output_cost_per_1m: 0.0
+
+    spark-pro:
+      module: spark
+      class: SparkLLM
+      location: cloud
+      requires: [SPARK_API_KEY]
+      import_check: websockets
+      install_extra: cascade_qwen
+      description: "科大讯飞星火 Pro via WebSocket"
+      model: pro
+      input_cost_per_1m: 0.0
+      output_cost_per_1m: 0.0
+
+    spark-lite:
+      module: spark
+      class: SparkLLM
+      location: cloud
+      requires: [SPARK_API_KEY]
+      import_check: websockets
+      install_extra: cascade_qwen
+      description: "科大讯飞星火 Lite via WebSocket - 最轻量、最快"
+      model: lite
+      input_cost_per_1m: 0.0
+      output_cost_per_1m: 0.0
+
+
+tts:
+  provider: piper_zh  # tts_openai, kokoro, elevenlabs
+
+  trim_silence: true
+
+  providers:
+    tts_openai:
+      module: openai
+      class: OpenAITTS
+      location: cloud
+      requires: [OPENAI_API_KEY]
+      description: "OpenAI TTS API"
+      # Settings
+      voice: alloy
+      model: tts-1  # tts-1 or tts-1-hd
+      # Pricing (Feb 2026): $15/1M chars for tts-1, $30/1M chars for tts-1-hd
+      cost_per_1m_chars: 15.0
+
+    kokoro:
+      module: kokoro
+      class: KokoroTTS
+      location: local
+      requires: []
+      hardware: null
+      import_check: kokoro
+      install_extra: cascade_kokoro
+      description: "Kokoro local TTS - works on any PyTorch platform"
+      # Settings
+      voice: am_adam
+      # No cost for local providers
+
+    elevenlabs:
+      module: elevenlabs
+      class: ElevenLabsTTS
+      location: cloud
+      requires: [ELEVENLABS_API_KEY]
+      description: "ElevenLabs TTS API"
+      # Settings
+      voice_id: pNInz6obpgDQGcFmaJgB
+      model: eleven_flash_v2_5
+      # Pricing (Feb 2026)
+      cost_per_1m_chars: 30.0
+
+    gradium:
+      module: gradium
+      class: GradiumTTS
+      location: cloud
+      requires: [GRADIUM_API_KEY]
+      import_check: gradium
+      install_extra: cascade_gradium
+      description: "Gradium TTS - low-latency streaming voice AI"
+      # Settings
+      voice_id: YTpq7expH9539ERJ  # Emma (US/Feminine)
+      model: default
+      cost_per_1m_chars: 0.0
+
+    qwen_realtime_tts:
+      module: qwen_realtime
+      class: QwenRealtimeTTS
+      location: cloud
+      requires: [DASHSCOPE_API_KEY]
+      hardware: null
+      import_check: websockets
+      install_extra: cascade_qwen
+      description: "Qwen realtime TTS via DashScope WebSocket"
+      model: qwen3-tts-flash-realtime
+      websocket_url: wss://dashscope.aliyuncs.com/api-ws/v1/realtime
+      voice: Ethan
+      response_format: pcm
+      sample_rate: 24000
+      mode: commit
+      language_type: Chinese
+
+    piper_zh:
+      module: piper
+      class: PiperTTS
+      location: local
+      requires: []
+      hardware: null
+      import_check: piper
+      install_extra: cascade_piper
+      description: "Piper 本地中文 TTS - 轻量高性能"
+      model_onnx_path: models/TTS/piper-zh_CN-xiao_ya-medium/zh_CN-xiao_ya-medium.onnx
+      noise_scale: 0.667
+      length_scale: 1.0
+      noise_w: 0.8
+
+    kokoro_zh:
+      module: kokoro_zh
+      class: KokoroZHTTS
+      location: local
+      requires: []
+      hardware: null
+      import_check: kokoro
+      install_extra: cascade_kokoro_zh
+      description: "Kokoro-82M-v1.1-zh 中文 TTS - 高质量本地中文语音合成"
+      voice: zf_001
+      repo_id: hexgrad/Kokoro-82M-v1.1-zh
+      device: cpu
+
+    kokoro_zh_onnx:
+      module: kokoro_zh_onnx
+      class: KokoroZhOnnxTTS
+      location: local
+      requires: []
+      hardware: null
+      import_check: kokoro_onnx
+      install_extra: cascade_kokoro_zh_onnx
+      description: "Kokoro-zh ONNX 量化模型 (INT8, ~127MB) - CPU高速推理, ~5-10x faster"
+      voice: zf_001
+      model_variant: quantized
+      device: cpu
+
+    kokoro_zh_onnx_fp32:
+      module: kokoro_zh_onnx
+      class: KokoroZhOnnxTTS
+      location: local
+      requires: []
+      hardware: null
+      import_check: kokoro_onnx
+      install_extra: cascade_kokoro_zh_onnx
+      description: "Kokoro-zh ONNX 标准模型 (FP32, ~339MB) - CPU高质量推理"
+      voice: zf_001
+      model_variant: normal
+      device: cpu
+
+
+# Transcript analysis: real-time reactions to keywords/entities in user speech
+# Reactions are defined per-profile in profiles/<name>/reactions.yaml
+transcript_analysis:
+  gliner_model: urchade/gliner_small-v2.1  # GLiNER model for entity recognition

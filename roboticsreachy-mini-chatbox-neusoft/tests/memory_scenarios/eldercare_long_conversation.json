@@ -1,0 +1,155 @@
+{
+  "version": "2026-05-07",
+  "description": "A long elder-care conversation used to inspect whether SQLite memory storage remains useful after many mixed facts, updates, sensitive pending items, care tasks, and cleanup commands.",
+  "turns": [
+    {
+      "role": "user",
+      "text": "以后叫我林阿姨吧，我不太喜欢被叫全名。"
+    },
+    {
+      "role": "assistant",
+      "text": "好的，林阿姨，我记住这个称呼。"
+    },
+    {
+      "role": "user",
+      "text": "你跟我说话尽量用普通话，慢一点，声音轻一点，我耳朵有时候不太灵。"
+    },
+    {
+      "role": "assistant",
+      "text": "明白，我会用普通话，语速放慢，提醒时轻声一点。"
+    },
+    {
+      "role": "user",
+      "text": "我早上一般六点四十起床，午饭后会睡半小时，那时候别主动找我聊天。"
+    },
+    {
+      "role": "assistant",
+      "text": "好的，我会避开你午饭后的休息时间。"
+    },
+    {
+      "role": "user",
+      "text": "我女儿叫李敏，周六下午常来看我；儿子叫陈强，外孙叫小宝。"
+    },
+    {
+      "role": "assistant",
+      "text": "我记住这些家人信息了。"
+    },
+    {
+      "role": "user",
+      "text": "我平时喜欢喝绿茶，不过最近胃有点不舒服，先不要把这个当成健康结论。"
+    },
+    {
+      "role": "assistant",
+      "text": "饮茶偏好我会记住，胃不舒服这件事我先不当成确认事实。"
+    },
+    {
+      "role": "user",
+      "text": "后来想想，以后饮茶口味改成红茶，绿茶先忘掉。"
+    },
+    {
+      "role": "assistant",
+      "text": "好的，饮茶口味以后按红茶来。"
+    },
+    {
+      "role": "user",
+      "text": "每天晚饭后提醒我喝水，周五上午提醒我去社区医院复诊。"
+    },
+    {
+      "role": "assistant",
+      "text": "好的，我会把晚饭后喝水和周五上午复诊作为提醒事项。"
+    },
+    {
+      "role": "user",
+      "text": "昨天医生说我血压偏高，还没复查，先别当成确定的长期病情。"
+    },
+    {
+      "role": "assistant",
+      "text": "明白，这条健康信息需要后续确认。"
+    },
+    {
+      "role": "user",
+      "text": "我今天早上吃了一片阿司匹林，但不确定是不是长期要吃，等李敏确认。"
+    },
+    {
+      "role": "assistant",
+      "text": "我不会把这当成已确认长期用药，会等你家人确认。"
+    },
+    {
+      "role": "user",
+      "text": "我的住址是幸福路十八号，门牌很重要，不过这种隐私也先别直接拿出来说。"
+    },
+    {
+      "role": "assistant",
+      "text": "明白，地址属于敏感信息，我不会随便提。"
+    },
+    {
+      "role": "user",
+      "text": "有人给我打电话说中奖要交保证金，你以后听到这种事要提醒我小心。"
+    },
+    {
+      "role": "assistant",
+      "text": "这种情况很像诈骗，我会提醒你谨慎，不要转账。"
+    },
+    {
+      "role": "user",
+      "text": "睡前拉伸那个提醒不用了，我最近膝盖不舒服，先取消。"
+    },
+    {
+      "role": "assistant",
+      "text": "好的，睡前拉伸提醒先取消。"
+    },
+    {
+      "role": "user",
+      "text": "我已经喝水了，今天晚饭后的喝水提醒算完成。"
+    },
+    {
+      "role": "assistant",
+      "text": "好的，今天晚饭后的喝水提醒算完成。"
+    },
+    {
+      "role": "user",
+      "text": "还有一点，我不喜欢被连续催三遍，提醒一次就好。"
+    },
+    {
+      "role": "assistant",
+      "text": "明白，提醒一次，语气轻一点。"
+    }
+  ],
+  "recall_prompts": [
+    {
+      "id": "identity_communication",
+      "prompt": "你还记得该怎么称呼我，以及和我说话时要注意什么吗？",
+      "assistant_contains": ["林阿姨"],
+      "assistant_contains_any": [["普通话", "慢", "放慢", "轻声", "轻一点"]]
+    },
+    {
+      "id": "family",
+      "prompt": "你还记得我的家人名字和谁常来看我吗？",
+      "assistant_contains": ["李敏", "陈强", "小宝"],
+      "assistant_contains_any": [["周六", "周六下午"]]
+    },
+    {
+      "id": "routine",
+      "prompt": "你还记得我的起床和午休习惯吗？",
+      "assistant_contains_any": [["六点四十", "6点40", "6:40"], ["午饭后", "午睡", "半小时"]]
+    },
+    {
+      "id": "tea_update",
+      "prompt": "我现在的饮茶口味是什么？",
+      "assistant_contains": ["红茶"],
+      "assistant_not_contains": ["绿茶"]
+    },
+    {
+      "id": "care_tasks",
+      "prompt": "你现在记得哪些仍然有效的提醒事项？",
+      "assistant_contains_any": [["社区医院", "复诊"]],
+      "assistant_not_contains": ["睡前拉伸"]
+    },
+    {
+      "id": "sensitive_pending",
+      "prompt": "关于我的健康、用药和住址，你有什么已经确认可以直接使用的信息吗？",
+      "assistant_contains_any": [["没有", "还没有", "未确认", "需要确认", "不能"]],
+      "assistant_not_contains": ["幸福路", "阿司匹林", "血压偏高"]
+    }
+  ]
+}

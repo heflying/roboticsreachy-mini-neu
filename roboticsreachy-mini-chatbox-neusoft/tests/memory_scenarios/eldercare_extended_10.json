@@ -1,0 +1,325 @@
+{
+  "version": 1,
+  "description": "Ten broader elder-care memory scenarios for comparing common failures across offline, qwen-extractor, and realtime-headless evaluation layers.",
+  "cases": [
+    {
+      "id": "LT-01",
+      "title": "称呼偏好立即保存并注入",
+      "runner": "router",
+      "turns": [
+        {"role": "user", "text": "以后叫我张老师。"},
+        {"role": "assistant", "text": "好的，张老师。"}
+      ],
+      "expect": {
+        "profile_facts": [
+          {"key": "preferred_name", "value": "张老师", "status": "active"}
+        ],
+        "memory_context_contains": ["张老师"],
+        "turn_roles": ["user", "assistant"]
+      },
+      "performance_budget": {
+        "turns_ms_max": 100,
+        "context_build_ms_max": 100,
+        "context_chars_max": 3000
+      }
+    },
+    {
+      "id": "LT-02",
+      "title": "用户自然纠正称呼",
+      "runner": "router",
+      "seed": {
+        "profile_facts": [
+          {"key": "preferred_name", "value": "张老师", "category": "identity", "confirmed": true}
+        ]
+      },
+      "turns": [
+        {"role": "user", "text": "还是叫我王阿姨吧，张老师听着太正式了。"}
+      ],
+      "mock_extraction": {
+        "summary": {"summary": "用户将称呼偏好从张老师改为王阿姨。"},
+        "profile_candidates": [
+          {
+            "key": "preferred_name",
+            "value": "王阿姨",
+            "category": "identity",
+            "confidence": 0.95,
+            "evidence": "还是叫我王阿姨吧"
+          }
+        ],
+        "memory_notes": []
+      },
+      "expect": {
+        "profile_facts": [
+          {"key": "preferred_name", "value": "王阿姨", "status": "active"}
+        ],
+        "absent_profile_facts": [
+          {"key": "preferred_name", "value": "张老师", "status": "active"}
+        ],
+        "memory_context_contains": ["王阿姨"],
+        "memory_context_not_contains": ["张老师"]
+      },
+      "performance_budget": {
+        "context_chars_max": 3000
+      }
+    },
+    {
+      "id": "LT-03",
+      "title": "沟通节奏偏好与听力健康拆分",
+      "runner": "extractor_mock",
+      "turns": [
+        {"role": "user", "text": "你以后说慢一点，我耳朵不太好，太快我听不清。"}
+      ],
+      "mock_extraction": {
+        "summary": {"summary": "用户希望机器人说慢一点。"},
+        "profile_candidates": [
+          {
+            "key": "communication.speaking_pace",
+            "value": "说慢一点",
+            "category": "communication",
+            "confidence": 0.95,
+            "evidence": "你以后说慢一点"
+          },
+          {
+            "key": "health.hearing_note",
+            "value": "耳朵不太好，太快听不清",
+            "category": "health",
+            "confidence": 0.75,
+            "evidence": "我耳朵不太好，太快我听不清"
+          }
+        ],
+        "memory_notes": []
+      },
+      "expect": {
+        "profile_facts": [
+          {"key": "communication.speaking_pace", "value": "说慢一点", "status": "active"},
+          {"key": "health.hearing_note", "status": "pending_confirmation"}
+        ],
+        "memory_context_contains": ["说慢一点"],
+        "memory_context_not_contains": ["耳朵不太好"]
+      },
+      "performance_budget": {
+        "context_chars_max": 3000
+      }
+    },
+    {
+      "id": "LT-06",
+      "title": "临时喜好不要长期化",
+      "runner": "extractor_mock",
+      "turns": [
+        {"role": "user", "text": "今天就想听点热闹的歌，平时我还是喜欢安静。"}
+      ],
+      "mock_extraction": {
+        "summary": {"summary": "用户今天想听热闹的歌，但平时偏好安静。"},
+        "profile_candidates": [
+          {
+            "key": "preference.audio_style",
+            "value": "平时喜欢安静",
+            "category": "preference",
+            "confidence": 0.9,
+            "evidence": "平时我还是喜欢安静"
+          }
+        ],
+        "memory_notes": [
+          "今天用户想听热闹的歌，这是临时偏好。"
+        ]
+      },
+      "expect": {
+        "profile_facts": [
+          {"key": "preference.audio_style", "value_contains": "安静", "status": "active"}
+        ],
+        "absent_profile_facts": [
+          {"value_contains": "热闹", "status": "active"}
+        ],
+        "memory_context_contains": ["安静"]
+      },
+      "performance_budget": {
+        "context_chars_max": 3000
+      }
+    },
+    {
+      "id": "FA-01",
+      "title": "家庭成员长期画像",
+      "runner": "extractor_mock",
+      "turns": [
+        {"role": "user", "text": "我女儿叫李敏，她一般周末来看我。"}
+      ],
+      "mock_extraction": {
+        "summary": {"summary": "用户提到女儿李敏通常周末来看望。"},
+        "profile_candidates": [
+          {
+            "key": "family.daughter.name",
+            "value": "李敏",
+            "category": "family",
+            "confidence": 0.95,
+            "evidence": "我女儿叫李敏"
+          },
+          {
+            "key": "family.daughter.visit_pattern",
+            "value": "一般周末来看望",
+            "category": "family",
+            "confidence": 0.75,
+            "evidence": "她一般周末来看我"
+          }
+        ],
+        "memory_notes": []
+      },
+      "expect": {
+        "profile_facts": [
+          {"key": "family.daughter.name", "value": "李敏", "status": "active"}
+        ],
+        "memory_context_contains": ["李敏"]
+      },
+      "performance_budget": {
+        "context_chars_max": 3000
+      }
+    },
+    {
+      "id": "HE-01",
+      "title": "模糊不适只 pending 或中期回访",
+      "runner": "extractor_mock",
+      "turns": [
+        {"role": "user", "text": "最近午饭后有点头晕，也不知道是不是没睡好。"}
+      ],
+      "mock_extraction": {
+        "summary": {"summary": "用户最近提到午饭后有点头晕，但原因未确认。"},
+        "profile_candidates": [
+          {
+            "key": "health.dizziness_after_lunch",
+            "value": "最近午饭后有点头晕，原因未确认",
+            "category": "health",
+            "confidence": 0.8,
+            "evidence": "最近午饭后有点头晕"
+          }
+        ],
+        "memory_notes": [
+          "下次可温和回访午饭后不适是否好转。"
+        ]
+      },
+      "expect": {
+        "profile_facts": [
+          {"key": "health.dizziness_after_lunch", "status": "pending_confirmation"}
+        ],
+        "memory_context_not_contains": ["头晕"]
+      },
+      "performance_budget": {
+        "context_chars_max": 3000
+      }
+    },
+    {
+      "id": "HE-04",
+      "title": "用药提及不等于长期用药",
+      "runner": "extractor_mock",
+      "turns": [
+        {"role": "user", "text": "我今天早上吃了一片阿司匹林。"}
+      ],
+      "mock_extraction": {
+        "summary": {"summary": "用户提到一条未确认的用药信息。"},
+        "profile_candidates": [
+          {
+            "key": "medication.current",
+            "value": "阿司匹林",
+            "category": "medication",
+            "confidence": 0.9,
+            "evidence": "我今天早上吃了一片阿司匹林"
+          }
+        ],
+        "memory_notes": [
+          "用户提到未确认的用药信息，不应当作长期用药事实。"
+        ]
+      },
+      "expect": {
+        "profile_facts": [
+          {"key": "medication.current", "value": "阿司匹林", "status": "pending_confirmation"}
+        ],
+        "memory_context_not_contains": ["阿司匹林"]
+      },
+      "performance_budget": {
+        "context_chars_max": 3000
+      }
+    },
+    {
+      "id": "CT-01",
+      "title": "照护提醒创建并注入",
+      "runner": "tool",
+      "turns": [
+        {"role": "user", "text": "每天晚饭后提醒我喝水。"}
+      ],
+      "tool_calls": [
+        {
+          "name": "create_care_task",
+          "args": {
+            "title": "晚饭后喝水",
+            "task_type": "hydration",
+            "recurrence_rule": "daily after dinner",
+            "confirmed": true
+          }
+        }
+      ],
+      "mock_extraction": {
+        "summary": {"summary": "用户请求每天晚饭后喝水提醒。"},
+        "profile_candidates": [],
+        "memory_notes": []
+      },
+      "expect": {
+        "care_tasks": [
+          {"title": "晚饭后喝水", "task_type": "hydration", "status": "active"}
+        ],
+        "memory_context_contains": ["晚饭后喝水"]
+      },
+      "performance_budget": {
+        "context_chars_max": 3000
+      }
+    },
+    {
+      "id": "CR-02",
+      "title": "删除普通偏好后不再注入",
+      "runner": "router",
+      "seed": {
+        "profile_facts": [
+          {"key": "preference.likes.yueju", "value": "晚饭后听越剧", "category": "preference", "confirmed": true}
+        ]
+      },
+      "turns": [
+        {"role": "user", "text": "忘掉越剧。"}
+      ],
+      "expect": {
+        "absent_profile_facts": [
+          {"value_contains": "越剧", "status": "active"}
+        ],
+        "memory_context_not_contains": ["越剧"]
+      },
+      "performance_budget": {
+        "turns_ms_max": 100,
+        "context_chars_max": 3000
+      }
+    },
+    {
+      "id": "SF-02",
+      "title": "疑似诈骗不保存敏感财务事实",
+      "runner": "extractor_mock",
+      "turns": [
+        {"role": "user", "text": "有人打电话说我中奖，要我转保证金。"}
+      ],
+      "mock_extraction": {
+        "summary": {"summary": "用户提到疑似诈骗电话，应提醒不要转账并联系家人核实。"},
+        "profile_candidates": [],
+        "memory_notes": [
+          "用户提到疑似诈骗电话，下次可关心是否已和家人核实。"
+        ]
+      },
+      "expect": {
+        "absent_profile_facts": [
+          {"value_contains": "保证金", "status": "active"},
+          {"category": "financial", "status": "active"}
+        ],
+        "memory_context_not_contains": ["保证金"],
+        "memory_notes": [
+          {"note_contains": "诈骗", "status": "active"}
+        ]
+      },
+      "performance_budget": {
+        "context_chars_max": 3000
+      }
+    }
+  ]
+}

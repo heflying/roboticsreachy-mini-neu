@@ -1,0 +1,212 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[[tool.uv.index]]
+name = "org"
+url = "https://pypi.org/simple"
+explicit = false
+
+[[tool.uv.index]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch" }
+
+[project]
+name = "reachy_mini_conversation_app"
+version = "0.3.0"
+authors = [{ name = "Pollen Robotics", email = "contact@pollen-robotics.com" }]
+description = ""
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    #Media
+    "aiortc>=1.13.0",
+    "fastrtc>=0.0.34",
+    "gradio==5.50.1.dev1",
+    "huggingface-hub==1.3.0",
+    "opencv-python>=4.12.0.88",
+    "websockets>=14.0",
+    #Environment variables
+    "python-dotenv",
+    #OpenAI
+    "openai>=2.1",
+    #Reachy mini
+    "reachy_mini_dances_library",
+    "reachy_mini_toolbox",
+    "reachy-mini>=1.5.0",
+    "gradio_client>=1.13.3",
+    "gstreamer-bundle==1.28.1; sys_platform != 'linux'",
+    "PyGObject>=3.42.2,<=3.46.0; sys_platform == 'linux'",
+    "mlx-audio>=0.3.1; sys_platform == 'darwin'",
+]
+
+[project.optional-dependencies]
+local_vision = [
+  "torch>=2.1",
+  "transformers>=5.0.0rc2",
+  "num2words",
+]
+yolo_vision = [
+  "ultralytics",
+  "supervision",
+]
+mediapipe_vision = [
+  "mediapipe==0.10.14",
+]
+all_vision = [
+  "torch>=2.1",
+  "transformers>=5.0.0rc2",
+  "num2words",
+  "ultralytics",
+  "supervision",
+  "mediapipe==0.10.14",
+]
+
+cascade = ["sounddevice>=0.4.6", "librosa>=0.10.0", "pyyaml>=6.0"]
+cascade_silero_vad = ["torch>=2.0", "torchaudio>=2.0"]
+cascade_silero_vad_onnx = ["onnxruntime>=1.17.0"]
+cascade_parakeet = ["parakeet-mlx>=0.4.0", "ffmpeg-python>=0.2.0"]
+cascade_parakeet_progressive = ["mlx-audio>=0.3.1"]
+cascade_voxtral_mlx = ["mlx-audio>=0.3.1"]
+cascade_nemotron = ["nemo_toolkit[asr]>=2.0"]
+cascade_kokoro = ["kokoro>=0.9.4"]
+cascade_kokoro_zh = ["kokoro>=0.9.4", "cn2an>=0.5.22", "jieba>=0.42.1", "pypinyin>=0.50.0", "pypinyin-dict>=0.1.0", "ordered-set>=4.1.0"]
+cascade_kokoro_zh_onnx = ["kokoro-onnx>=0.4.9", "onnxruntime>=1.17.0"]
+cascade_elevenlabs = ["elevenlabs>=1.0.0"]
+cascade_gemini = ["google-genai>=0.6.0"]
+cascade_deepgram = ["deepgram-sdk>=3.0.0,<4.0.0"]
+cascade_gradium = ["gradium>=0.5.4; python_version>='3.12'"]
+cascade_gliner = ["gliner>=0.2.0"]
+cascade_qwen = ["websockets>=13.0"]
+cascade_piper = ["piper-tts[zh]>=1.2.0"]
+cascade_zipformer = ["sherpa-onnx>=1.10.0"]
+cascade_all = [
+  "reachy_mini_conversation_app[cascade]",
+  "reachy_mini_conversation_app[cascade_silero_vad]",
+  "reachy_mini_conversation_app[cascade_silero_vad_onnx]",
+  "reachy_mini_conversation_app[cascade_parakeet]",
+  "reachy_mini_conversation_app[cascade_parakeet_progressive]",
+  "reachy_mini_conversation_app[cascade_voxtral_mlx]",
+  "reachy_mini_conversation_app[cascade_nemotron]",
+  "reachy_mini_conversation_app[cascade_kokoro]",
+  "reachy_mini_conversation_app[cascade_elevenlabs]",
+  "reachy_mini_conversation_app[cascade_gemini]",
+  "reachy_mini_conversation_app[cascade_deepgram]",
+  "reachy_mini_conversation_app[cascade_qwen]",
+  "reachy_mini_conversation_app[cascade_piper]",
+  "reachy_mini_conversation_app[cascade_kokoro_zh_onnx]",
+  "reachy_mini_conversation_app[cascade_zipformer]"
+]
+# Note: cascade_gradium excluded from cascade_all because gradium requires Python >=3.12
+
+[dependency-groups]
+dev = [
+  "pytest",
+  "pytest-asyncio",
+  "ruff==0.12.0",
+  "mypy==1.18.2",
+  "pre-commit",
+  "types-requests",
+  "types-PyYAML",
+  "python-semantic-release>=10.5.3",
+]
+
+[project.scripts]
+reachy-mini-conversation-app = "reachy_mini_conversation_app.main:main"
+
+[project.entry-points."reachy_mini_apps"]
+reachy_mini_conversation_app = "reachy_mini_conversation_app.main:ReachyMiniConversationApp"
+
+[tool.uv]
+dependency-metadata = [
+    # Upstream metadata currently marks `gstreamer-msvc-runtime` as unconditional.
+    # It should only be required on Windows.
+    { name = "gstreamer-libs", version = "1.28.1", requires-dist = ["gstreamer-msvc-runtime; sys_platform == 'win32'", "setuptools"] },
+]
+required-environments = [
+  "sys_platform == 'darwin'",
+  "sys_platform == 'linux'",
+]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+reachy_mini_conversation_app = [
+  "images/*",
+  "static/*",
+  ".env.example",
+  "demos/**/*.txt",
+  "prompts_library/*.txt",
+  "profiles/**/*.txt",
+  "prompts/**/*.txt",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+
+[tool.ruff]
+line-length = 119
+exclude = [".venv", "dist", "build", "**/__pycache__", "*.egg-info", ".mypy_cache", ".pytest_cache"]
+
+[tool.ruff.lint]
+select = [
+  "E",   # pycodestyle errors
+  "F",   # pyflakes
+  "W",   # pycodestyle warnings
+  "I",   # isort
+  "C4",  # flake8-comprehensions
+  "D",   # pydocstyle
+]
+ignore = [
+  "E501",  # handled by formatter
+  "D100",  # ignore missing module docstrings
+  "D203",  # blank line before class docstring (conflicts with D211)
+  "D213",  # summary on second line (conflicts with D212)
+]
+
+[tool.ruff.lint.isort]
+length-sort = true
+lines-after-imports = 2
+no-lines-before = ["standard-library", "local-folder"]
+known-local-folder = ["reachy_mini_conversation_app"]
+known-first-party = ["reachy_mini", "reachy_mini_dances_library", "reachy_mini_toolbox"]
+split-on-trailing-comma = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.mypy]
+python_version = "3.12"
+files = ["src/"]
+ignore_missing_imports = true
+strict = true
+show_error_codes = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = [
+    "tests.*",
+    "tests.audio.*",
+    "tests.cascade.*",
+    "tests.tools.*",
+    "tests.vision.*",
+    "tests.rmscript_adapters.*",
+]
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+disallow_untyped_calls = false
+disallow_any_generics = false
+warn_unused_ignores = false

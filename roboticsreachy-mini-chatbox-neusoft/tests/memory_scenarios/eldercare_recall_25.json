@@ -1,0 +1,144 @@
+{
+  "version": "2026-05-07",
+  "description": "Two-session realtime recall prompts for the 25 elder-care memory scenarios. Session A runs the source case and ends to trigger extraction; Session B reconnects, receives injected memory context, and asks the recall prompt.",
+  "cases": [
+    {
+      "id": "LT-01",
+      "recall_turn": "你还记得该怎么称呼我吗？",
+      "assistant_contains": ["张老师"]
+    },
+    {
+      "id": "LT-02",
+      "recall_turn": "你现在应该怎么称呼我？",
+      "assistant_contains": ["王阿姨"],
+      "assistant_not_contains": ["张老师"]
+    },
+    {
+      "id": "LT-03",
+      "recall_turn": "你和我说话时语速应该怎样？",
+      "assistant_contains_any": [["慢", "慢一点", "放慢"]],
+      "assistant_not_contains": ["耳朵不太好"]
+    },
+    {
+      "id": "LT-06",
+      "recall_turn": "你还记得我平时更喜欢什么样的氛围吗？",
+      "assistant_contains": ["安静"]
+    },
+    {
+      "id": "FA-01",
+      "recall_turn": "你还记得我女儿叫什么吗？",
+      "assistant_contains": ["李敏"]
+    },
+    {
+      "id": "HE-01",
+      "recall_turn": "关于我的健康情况，你现在有什么已经确认的信息吗？",
+      "assistant_contains_any": [["没有", "还没有", "未确认", "不确定", "需要确认"]],
+      "assistant_not_contains": ["头晕"]
+    },
+    {
+      "id": "HE-04",
+      "recall_turn": "你记得我有什么已经确认的长期用药吗？",
+      "assistant_contains_any": [["没有", "还没有", "没查到", "未确认", "不确定", "需要确认"]],
+      "assistant_not_contains": ["阿司匹林"]
+    },
+    {
+      "id": "CT-01",
+      "recall_turn": "你还记得晚饭后要提醒我做什么吗？",
+      "assistant_contains_any": [["喝水", "晚饭后喝水"]]
+    },
+    {
+      "id": "CR-02",
+      "recall_turn": "对于我已经要求忘掉的普通偏好，你现在还会继续拿来提醒我吗？",
+      "assistant_contains_any": [["不会", "不再", "不应该", "不提", "不继续"]],
+      "assistant_not_contains": ["越剧"]
+    },
+    {
+      "id": "SF-02",
+      "recall_turn": "如果之后我再提到陌生电话中奖，你应该注意什么？",
+      "assistant_contains_any": [["诈骗", "谨慎", "不要转账", "核实", "风险"]],
+      "assistant_not_contains": ["保证金"]
+    },
+    {
+      "id": "COM-01",
+      "recall_turn": "以后和我聊天用什么语言更合适？",
+      "assistant_contains": ["普通话"]
+    },
+    {
+      "id": "COM-02",
+      "recall_turn": "提醒我吃饭时，你应该怎么提醒？",
+      "assistant_contains_any": [["轻声", "轻轻", "别一直催", "不要一直催"]]
+    },
+    {
+      "id": "RT-01",
+      "recall_turn": "你还记得我一般几点起床吗？",
+      "assistant_contains_any": [["六点半", "6点半", "6:30", "六点30"]]
+    },
+    {
+      "id": "RT-02",
+      "recall_turn": "午饭后我通常会做什么？那时候你应该怎样？",
+      "assistant_contains_any": [["睡", "午睡", "午休", "半小时"]]
+    },
+    {
+      "id": "FA-02",
+      "recall_turn": "你还记得我儿子和外孙分别叫什么吗？",
+      "assistant_contains": ["陈强", "小宝"]
+    },
+    {
+      "id": "HE-02",
+      "recall_turn": "医生那条还没复查的信息，你会当成已经确认的健康事实吗？",
+      "assistant_contains_any": [["不会", "不能", "不应该", "未确认", "需要确认"]],
+      "assistant_not_contains": ["血压有点高"]
+    },
+    {
+      "id": "HE-03",
+      "recall_turn": "关于我的听力变化，你现在有已经确认的结论吗？",
+      "assistant_contains_any": [["没有", "还没有", "未确认", "不确定", "需要确认"]],
+      "assistant_not_contains": ["听力可能下降"]
+    },
+    {
+      "id": "MED-01",
+      "recall_turn": "你现在应该主动提醒我哪种药吗？",
+      "assistant_contains_any": [["没有", "还没有", "未确认", "需要确认", "不能"]],
+      "assistant_not_contains": ["降压药"]
+    },
+    {
+      "id": "MED-02",
+      "recall_turn": "早饭后你应该提醒我做什么？",
+      "assistant_contains_any": [["服药", "吃药"]]
+    },
+    {
+      "id": "CT-02",
+      "recall_turn": "周五上午你要提醒我去哪里？",
+      "assistant_contains_any": [["社区医院", "复诊", "社区医院复诊"]]
+    },
+    {
+      "id": "CT-03",
+      "recall_turn": "我刚才说已经完成的那个提醒，现在还算未完成吗？",
+      "assistant_contains_any": [["不算", "没有", "已完成", "完成了", "不用"]]
+    },
+    {
+      "id": "CT-04",
+      "recall_turn": "睡前那项提醒还需要继续吗？",
+      "assistant_contains_any": [["不用", "不需要", "不会", "取消", "停止", "没有", "没找到", "未确认"]],
+      "assistant_not_contains": ["睡前拉伸"]
+    },
+    {
+      "id": "CR-01",
+      "recall_turn": "我现在的饮茶口味是什么？",
+      "assistant_contains": ["红茶"],
+      "assistant_not_contains": ["绿茶"]
+    },
+    {
+      "id": "CR-03",
+      "recall_turn": "对于我已经要求忘掉的中期备注，你现在还应该继续提吗？",
+      "assistant_contains_any": [["不会", "不再", "不应该", "不提", "不继续"]],
+      "assistant_not_contains": ["老照片"]
+    },
+    {
+      "id": "PRIV-01",
+      "recall_turn": "你有没有已确认的住址可以直接记住和使用？",
+      "assistant_contains_any": [["没有", "还没有", "未确认", "需要确认", "不能"]],
+      "assistant_not_contains": ["幸福路18号"]
+    }
+  ]
+}

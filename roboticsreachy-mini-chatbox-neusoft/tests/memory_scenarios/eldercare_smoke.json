@@ -1,0 +1,177 @@
+{
+  "version": 1,
+  "description": "Small deterministic smoke set for the elder-care memory evaluator. These cases do not require real APIs.",
+  "cases": [
+    {
+      "id": "LT-01",
+      "title": "称呼偏好立即保存并注入",
+      "runner": "router",
+      "turns": [
+        {
+          "role": "user",
+          "text": "以后叫我张老师。"
+        },
+        {
+          "role": "assistant",
+          "text": "好的，张老师。"
+        }
+      ],
+      "end_session": true,
+      "expect": {
+        "profile_facts": [
+          {
+            "key": "preferred_name",
+            "value": "张老师",
+            "status": "active"
+          }
+        ],
+        "memory_context_contains": [
+          "张老师"
+        ],
+        "turn_roles": [
+          "user",
+          "assistant"
+        ]
+      },
+      "performance_budget": {
+        "turns_ms_max": 100,
+        "context_build_ms_max": 100,
+        "context_chars_max": 3000
+      }
+    },
+    {
+      "id": "HE-04",
+      "title": "用药提及默认 pending 且不注入 context",
+      "runner": "extractor_mock",
+      "turns": [
+        {
+          "role": "user",
+          "text": "我今天早上吃了一片阿司匹林。"
+        },
+        {
+          "role": "assistant",
+          "text": "我知道了。用药信息最好和医生或家人确认。"
+        }
+      ],
+      "mock_extraction": {
+        "summary": {
+          "summary": "用户提到一条未确认的用药信息，需要谨慎对待为一次性用药提及。",
+          "topics": [
+            "用药提及"
+          ],
+          "risks": [
+            "药物信息未确认"
+          ]
+        },
+        "profile_candidates": [
+          {
+            "key": "medication.current",
+            "value": "阿司匹林",
+            "category": "medication",
+            "confidence": 0.9,
+            "evidence": "用户说今天早上吃了一片阿司匹林"
+          }
+        ],
+        "memory_notes": [
+          "用户今天提到过一条未确认的用药信息，但这不是已确认的长期用药信息。"
+        ],
+        "care_task_candidates": []
+      },
+      "end_session": true,
+      "expect": {
+        "profile_facts": [
+          {
+            "key": "medication.current",
+            "value": "阿司匹林",
+            "status": "pending_confirmation"
+          }
+        ],
+        "memory_context_not_contains": [
+          "阿司匹林"
+        ],
+        "session_summary_contains": [
+          "用药信息"
+        ]
+      },
+      "performance_budget": {
+        "end_session_ms_max": 300,
+        "context_chars_max": 3000
+      }
+    },
+    {
+      "id": "CT-01",
+      "title": "照护提醒可由工具路径创建并注入",
+      "runner": "tool",
+      "turns": [
+        {
+          "role": "user",
+          "text": "每天晚饭后提醒我喝水。"
+        }
+      ],
+      "tool_calls": [
+        {
+          "name": "create_care_task",
+          "args": {
+            "title": "晚饭后喝水",
+            "task_type": "hydration",
+            "recurrence_rule": "daily after dinner",
+            "confirmed": true
+          }
+        }
+      ],
+      "end_session": true,
+      "expect": {
+        "care_tasks": [
+          {
+            "title": "晚饭后喝水",
+            "task_type": "hydration",
+            "status": "active"
+          }
+        ],
+        "memory_context_contains": [
+          "晚饭后喝水"
+        ]
+      },
+      "performance_budget": {
+        "context_chars_max": 3000
+      }
+    },
+    {
+      "id": "CR-02",
+      "title": "删除普通偏好后不再注入",
+      "runner": "router",
+      "seed": {
+        "profile_facts": [
+          {
+            "key": "preference.likes.yueju",
+            "value": "晚饭后听越剧",
+            "category": "preference",
+            "confirmed": true
+          }
+        ]
+      },
+      "turns": [
+        {
+          "role": "user",
+          "text": "忘掉越剧。"
+        }
+      ],
+      "end_session": true,
+      "expect": {
+        "absent_profile_facts": [
+          {
+            "value_contains": "越剧",
+            "status": "active"
+          }
+        ],
+        "memory_context_not_contains": [
+          "越剧"
+        ]
+      },
+      "performance_budget": {
+        "turns_ms_max": 100,
+        "context_chars_max": 3000
+      }
+    }
+  ]
+}

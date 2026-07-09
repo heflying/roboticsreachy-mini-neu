@@ -1,0 +1,68 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
+.venv-win/  # Windows专用虚拟环境
+venv/
+ENV/
+env/
+
+# Environment variables
+.env
+
+# Build and distribution
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Testing
+.pytest_cache/
+pytest-cache-files-*/
+.coverage
+.hypothesis/
+htmlcov/
+coverage.xml
+*.cover
+
+# Linting and formatting
+.ruff_cache/
+.mypy_cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Security
+*.key
+*.pem
+*.crt
+*.csr
+
+# Temporary files
+tmp/
+*.log
+cache/
+.uv-cache/
+
+# macOS
+.DS_Store
+
+# Linux
+*~
+.directory
+.Trash-*
+.nfs*
+
+CLAUDE.md
+.claude/
+
+# User-created personalities (managed by UI)
+src/reachy_mini_conversation_app/profiles/user_personalities/
+/uv.lock
