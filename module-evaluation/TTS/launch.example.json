@@ -1,0 +1,59 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "Python Debugger: simple_test",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/eval_custom/test_streaming_tts.py",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/eval_custom/.venv/Scripts/python.exe",
+            "args": [
+                "--listen",
+            ],
+            "env":{},
+            "cwd": "${workspaceFolder}/eval_custom"
+        },
+        {
+            "name": "Python Debugger: simple_piper_tts",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/eval_custom/test_piper_tts.py",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/eval_custom/.venv/Scripts/python.exe",
+            "args": [
+            ],
+            "env":{},
+            "cwd": "${workspaceFolder}/eval_custom"
+        },
+        {
+            "name": "Python Debugger: compare_simple_test",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/eval_custom/compare_results.py",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/eval_custom/.venv/Scripts/python.exe",
+            "args": [
+                "--result-dir", "${workspaceFolder}/eval_custom/result_piper"
+            ],
+            "env":{},
+            "cwd": "${workspaceFolder}/eval_custom"
+        },
+        {
+            "name": "Python Debugger: batch_synthesize",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/eval_custom/batch_synthesize.py",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/eval_custom/.venv/Scripts/python.exe",
+            "args": [
+            ],
+            "env":{},
+            "cwd": "${workspaceFolder}/eval_custom"
+        },
+    ]
+}

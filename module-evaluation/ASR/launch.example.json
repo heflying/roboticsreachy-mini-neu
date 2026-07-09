@@ -1,0 +1,61 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "Python Debugger: eval",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/eval_jiwer/run_eval.py",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/eval_jiwer/.venv/Scripts/python.exe",
+            "args": [
+                // "--model-type", "sherpa_onnx_paraformer",
+                // "--sherpa-model-dir", "models/ASR/paraformer-bilingual-zh-en", 
+
+                // "--model-type", "sherpa_onnx_paraformer",
+                // "--sherpa-model-dir", "models/ASR/paraformer-trilingual-zh-cantonese-en", 
+
+                // "--model-type", "sherpa_onnx_zipformer",
+                // "--sherpa-model-dir", "models/ASR/zipformer-zh", 
+
+                "--model-type", "sherpa_onnx_zipformer",
+                "--sherpa-model-dir", "models/ASR/sherpa-onnx-x-asr-160ms-streaming-zipformer-transducer-zh-en-int8-2026-06-05",
+
+                // "--model-type", "sherpa_onnx_zipformer",
+                // "--sherpa-model-dir", "models/ASR/sherpa-onnx-x-asr-160ms-streaming-zipformer-transducer-zh-en-punct-int8-2026-06-05",
+
+                "--manifest", "manifests/seniortalk_test.jsonl", "manifests/xiaoya_gen.jsonl",
+            ],
+            "env":{},
+            "cwd": "${workspaceFolder}/eval_jiwer"
+        },
+        {
+            "name": "Python Debugger: compare",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/eval_jiwer/compare_results.py",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/eval_jiwer/.venv/Scripts/python.exe",
+            "args": [
+            ],
+            "env":{},
+            "cwd": "${workspaceFolder}/eval_jiwer"
+        },
+        {
+            "name": "Python Debugger: simple_test_input_file",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/eval_jiwer/asr_test.py",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/eval_jiwer/.venv/Scripts/python.exe",
+            "args": [
+            ],
+            "env":{},
+            "cwd": "${workspaceFolder}/eval_jiwer"
+        },
+    ]
+}
