@@ -8,7 +8,7 @@ dependencies = [
     "audiomentations>=0.34",
     "jiwer>=3.0",
     "numpy>=1.24",
-    "onnxruntime>=1.24",
+    "onnxruntime==1.24.4",
     "psutil>=5.9",
     "huggingface-hub>=0.20",
     "sherpa-onnx==1.13.1",
